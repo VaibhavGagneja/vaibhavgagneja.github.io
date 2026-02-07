@@ -8,7 +8,7 @@ order: 5
 
 **DevOps Engineer** 
 
-[📄 Download CV](/assets/cv/Vaibhav_Gagneja_CV.pdf){: .btn .btn-primary }
+[📄 Download CV](/assets/cv/Vaibhav_Gagneja_CV.pdf){: .btn .btn-primary target="_blank" }
 
 ---
 
@@ -30,7 +30,10 @@ I'm passionate about automating everything and helping teams ship faster with co
 
 ## Certifications
 
-🏅 **Certified Kubernetes Application Developer (CKAD)** - CNCF
+| Certification | Issuer | Credential |
+|:--------------|:------:|:----------:|
+| 🏅 **Certified Kubernetes Application Developer (CKAD)** | CNCF | [View](https://drive.google.com/file/d/1ccZZ2E_adtJm4aBTfopV1bq82Jx3JABY/view){:target="_blank"} |
+| ☁️ **Microsoft Azure Fundamentals (AZ-900)** | Microsoft | [View](https://learn.microsoft.com/en-us/users/vaibhavgagneja-9934/credentials/a84b9ee9a15deb16){:target="_blank"} |   
 
 ---
 
@@ -45,14 +48,11 @@ I'm passionate about automating everything and helping teams ship faster with co
 
 ## Projects
 
-### 🚀 [Realtime DevOps Project using Azure DevOps and GitOps](https://github.com/VaibhavGagneja/Realtime-DevOps-Project)
-End-to-end CI/CD pipeline implementation using Azure DevOps with GitOps practices for automated deployments.
+### 🚀 [kubeGovern](https://github.com/VaibhavGagneja/kubeGovern/tree/master){:target="_blank"}
+Zero-Trust Just-In-Time (JIT) Network Orchestrator Technologies: Java 21, Spring Boot 3, Kubernetes (Kind/Calico), Fabric8 Client, REST APIs.
 
-### 🎵 [Video-to-MP3 Converter (Microservices on Kubernetes)](https://github.com/VaibhavGagneja/Video-to-Mp3-Converter-Python)
+### 🎵 [Youtube Video Converter](https://github.com/VaibhavGagneja/Youtube_Video_converter){:target="_blank"}
 Distributed microservices system deployed on Kubernetes for video to MP3 conversion at scale.
-
-### 🛒 [Multi-Vendor E-commerce Platform](https://github.com/VaibhavGagneja/Multi-Vendor-E-commerce-Platform)
-Full-stack application with containerized deployment and CI/CD pipeline.
 
 ---
 
