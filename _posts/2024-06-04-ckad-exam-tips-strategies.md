@@ -43,7 +43,7 @@ I cleared the Certified Kubernetes Application Developer (CKAD) exam on my first
 
 - **Master kubectl** - The most important resource: [kubectl commands reference](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#create)
 
-- Take the course I mentioned in my [Part 1 article](/posts/certified-kubernetes-application-developer-certification-in-2-weeks/)
+- Take the course I mentioned in my [Part 1 article](/posts/ckad-certification-in-2-weeks/)
 
 - **Understand the theory** - This helps you remember commands better by understanding the use case of each resource.
 
