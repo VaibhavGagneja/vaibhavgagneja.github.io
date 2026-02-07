@@ -50,7 +50,6 @@ This blog will cover a wide range of topics, including:
 I'll be posting regularly about real-world challenges I encounter, solutions I discover, and lessons I learn along the way. Each post will aim to be practical and actionable.
 
 If you find the content helpful:
-- ⭐ Star my projects on [GitHub](https://github.com/VaibhavGagneja)
 - 🔗 Connect on [LinkedIn](https://www.linkedin.com/in/vaibhavgagneja/)
 
 Stay tuned for more content coming soon!

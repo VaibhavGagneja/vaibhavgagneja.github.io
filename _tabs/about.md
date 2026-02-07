@@ -1,33 +1,65 @@
 ---
 # the default layout is 'page'
 icon: fas fa-info-circle
-order: 4
+order: 5
 ---
 
-## Hi, I'm Vaibhav Gagneja 👋
+# Hello, I'm Vaibhav Gagneja 👋
 
-I'm a passionate **DevOps Engineer** and **Cloud Infrastructure** enthusiast with a focus on building scalable, reliable, and automated systems.
+**DevOps Engineer** 
 
-### What I Do
-
-- 🚀 **DevOps & CI/CD** — Designing and implementing robust pipelines for seamless software delivery
-- ☁️ **Cloud Infrastructure** — Building and managing cloud-native solutions on AWS, Azure, and GCP
-- 🔧 **Infrastructure as Code** — Automating infrastructure with Terraform, Ansible, and Kubernetes
-- 📊 **Monitoring & Observability** — Setting up comprehensive monitoring and alerting systems
-
-### About This Blog
-
-**OpsNexus** is where I share my experiences, learnings, and insights from the world of DevOps and Cloud Engineering. Expect articles on:
-
-- Best practices for infrastructure automation
-- Cloud architecture patterns and solutions
-- Troubleshooting guides and lessons learned
-- Tools and technologies that make our lives easier
-
-### Connect With Me
-
-Feel free to connect with me on [LinkedIn](https://www.linkedin.com/in/vaibhavgagneja/) or check out my projects on [GitHub](https://github.com/VaibhavGagneja).
+[📄 Download CV](/assets/cv/Vaibhav_Gagneja_CV.pdf){: .btn .btn-primary }
 
 ---
 
-*Thanks for visiting OpsNexus!*
+## About Me
+
+DevOps Engineer with expertise in **cloud infrastructure, automation, and CI/CD pipelines**. I specialize in building scalable, reliable systems using Infrastructure as Code and GitOps practices.
+
+**Core Skills:**
+- **Cloud:** AWS, Azure
+- **Containers:** Docker, Kubernetes (CKAD Certified)
+- **IaC:** Terraform, Ansible
+- **CI/CD:** Jenkins, Azure DevOps, GitHub Actions
+- **Monitoring:** Prometheus, Grafana
+- **Version Control:** Git, GitHub
+
+I'm passionate about automating everything and helping teams ship faster with confidence.
+
+---
+
+## Certifications
+
+🏅 **Certified Kubernetes Application Developer (CKAD)** - CNCF
+
+---
+
+## Experience & Education
+
+| | |
+|:---:|:---:|
+| 💼 **Experience** | 🎓 **Education** |
+| 1+ years DevOps & Backend | B.Tech & M.Tech Computer Science |
+
+---
+
+## Projects
+
+### 🚀 [Realtime DevOps Project using Azure DevOps and GitOps](https://github.com/VaibhavGagneja/Realtime-DevOps-Project)
+End-to-end CI/CD pipeline implementation using Azure DevOps with GitOps practices for automated deployments.
+
+### 🎵 [Video-to-MP3 Converter (Microservices on Kubernetes)](https://github.com/VaibhavGagneja/Video-to-Mp3-Converter-Python)
+Distributed microservices system deployed on Kubernetes for video to MP3 conversion at scale.
+
+### 🛒 [Multi-Vendor E-commerce Platform](https://github.com/VaibhavGagneja/Multi-Vendor-E-commerce-Platform)
+Full-stack application with containerized deployment and CI/CD pipeline.
+
+---
+
+## Connect With Me
+
+| Platform | Link |
+|:--------:|:----:|
+| 📧 **Email** | [vaibhavgagneja@gmail.com](mailto:vaibhavgagneja@gmail.com) |
+| 💼 **LinkedIn** | [linkedin.com/in/vaibhavgagneja](https://www.linkedin.com/in/vaibhavgagneja/) |
+| 🐙 **GitHub** | [github.com/VaibhavGagneja](https://github.com/VaibhavGagneja) |
