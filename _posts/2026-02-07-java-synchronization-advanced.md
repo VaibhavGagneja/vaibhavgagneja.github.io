@@ -1,6 +1,6 @@
 ---
-title: "Java Synchronization Part 2: Deadlocks, Inter-Thread Communication and ReentrantLock"
-description: Master advanced Java synchronization - deadlock prevention, wait/notify/notifyAll, ReentrantLock, and modern concurrency utilities
+title: "Java Synchronization Part 2: Inter-Thread Communication"
+description: Master wait(), notify() and notifyAll() for thread coordination with practical examples and deep-dive internals
 author: Vaibhav Gagneja
 date: 2026-02-07 18:00:00 +0530
 categories: [Development, Java]
@@ -18,28 +18,95 @@ In **Part 1**, we covered the fundamentals of synchronization: synchronized meth
 
 ### What is Inter-Thread Communication?
 
-**Inter-Thread Communication** is a mechanism that allows threads to **cooperate** with each other instead of running independently.
+**Inter-Thread Communication** is a mechanism that allows threads to **cooperate** with each other instead of running independently. It's about one thread saying *"I'm done, you can proceed"* and another thread saying *"I'll wait until you tell me."*
 
-**Real-World Analogy: Restaurant Kitchen** 🍳
+### The Core Concept: Understanding wait() and notify()
 
-Think of a restaurant:
-- **Chef (Producer Thread)** prepares food
-- **Waiter (Consumer Thread)** serves food to customers
-- Chef says: *"Order #5 is ready!"* → `notify()`
-- Waiter waits for food → `wait()`
-- When notified, waiter takes the food and serves
+Before diving into code, let's understand **what these methods actually do**:
 
-Without ITC, the waiter would keep asking *"Is it ready? Is it ready?"* wasting time and resources!
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                THE wait() AND notify() MENTAL MODEL                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   Think of it like a WAITING ROOM system:                           │
+│                                                                      │
+│   ┌─────────────────┐         ┌─────────────────┐                   │
+│   │  SYNCHRONIZED   │         │   WAITING ROOM  │                   │
+│   │  BLOCK (Office) │         │   (Sleep Area)  │                   │
+│   │  🔒 Only 1 at   │         │   💤💤💤        │                   │
+│   │    a time       │         │   Threads sleep │                   │
+│   └────────┬────────┘         └────────┬────────┘                   │
+│            │                           │                             │
+│   wait() = │ "I'll step out to the    │                             │
+│            │  waiting room, someone   │                             │
+│            │  else can use the office"│                             │
+│            └───────────────────────────►                             │
+│                                                                      │
+│            ◄───────────────────────────┐                             │
+│  notify() = "Hey! One person from the │ Thread wakes up,            │
+│              waiting room, come back! │ WAITS for lock,             │
+│              (but I'm still in office │ then re-enters              │
+│               until I leave)"         │                             │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
-### Methods for ITC
+### What EXACTLY Happens?
 
-| Method | Description | Lock Status |
-|--------|-------------|-------------|
-| `wait()` | Makes current thread wait until `notify()` is called | **Releases** the lock |
-| `notify()` | Wakes up **one** waiting thread on the object's monitor | **Does NOT release** lock immediately |
-| `notifyAll()` | Wakes up **all** waiting threads on the object's monitor | **Does NOT release** lock immediately |
+| When you call... | What happens IMMEDIATELY | What happens NEXT |
+|------------------|-------------------------|-------------------|
+| `wait()` | 1. Thread **releases the lock** <br> 2. Thread goes to **sleep** (waiting state) | Thread stays asleep until `notify()` is called |
+| `notify()` | 1. One sleeping thread is **marked for wakeup** <br> 2. Notifying thread **keeps the lock** | Woken thread waits to **reacquire lock** before continuing |
+| `notifyAll()` | All sleeping threads are **marked for wakeup** | All woken threads compete to reacquire the lock |
 
-> **Important:** These methods must be called from within a synchronized block or method. They belong to the `Object` class, not the `Thread` class.
+> **🔑 Key Insight:** `notify()` doesn't immediately give the lock to the waiting thread! It just says *"wake up and get ready."* The waiting thread still has to wait until the notifying thread **exits the synchronized block**.
+>
+> **Note:** These methods belong to the `Object` class (not `Thread`) and must be called from within a synchronized context.
+
+---
+
+### Real-World Analogy: Restaurant Kitchen 🍳
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                    RESTAURANT ANALOGY                             │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  CHEF (Producer Thread)                WAITER (Consumer Thread)  │
+│  ═══════════════════════               ══════════════════════    │
+│                                                                   │
+│  1. Chef is cooking...                 Waiter: "I'll wait() -    │
+│     (holds the kitchen)                I'll sit in waiting room  │
+│                                        until food is ready"      │
+│          │                                     │                 │
+│          │                                     ▼                 │
+│          │                               ┌──────────┐            │
+│          │                               │ WAITING  │            │
+│          │                               │  ROOM 💤 │            │
+│          │                               └──────────┘            │
+│          ▼                                                       │
+│  2. "Order ready!"                                               │
+│     Chef calls notify()                                          │
+│     (still in kitchen)                                           │
+│          │                                     │                 │
+│          │    ──── "Hey, wake up!" ──────────►│                 │
+│          │                                     │                 │
+│          ▼                                     ▼                 │
+│  3. Chef exits kitchen                 Waiter wakes up but       │
+│     (releases lock)                    can't enter YET...        │
+│          │                                     │                 │
+│          │    ──── Lock available! ──────────►│                 │
+│          │                                     │                 │
+│          ▼                                     ▼                 │
+│  4. Chef done                          Waiter enters kitchen,    │
+│                                        picks up food, serves!    │
+│                                                                   │
+│  WITHOUT wait/notify: Waiter keeps asking "Ready? Ready? Ready?" │
+│  🔴 This wastes CPU cycles (called "busy waiting" or "polling")  │
+│                                                                   │
+└──────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -93,61 +160,97 @@ public class MainApp {
 }
 ```
 
-### Detailed Explanation
+### Step-by-Step Breakdown
 
-**1. MovieEarning Thread (Producer):**
+Let's trace through exactly what happens:
+
+**Step 1: Main thread starts MovieEarning thread**
 ```java
-synchronized (this) {
-    total_earning = ticket_price * tickets_sold;  // Do calculation
-    this.notify();  // Wake up waiting thread
-}
+MovieEarning me = new MovieEarning();
+me.start();  // MovieEarning thread created and running
 ```
-- Acquires lock on itself (`this`)
-- Performs the calculation
-- Calls `notify()` to wake up any waiting thread
-- Releases lock when exiting synchronized block
 
-**2. Main Thread (Consumer):**
+**Step 2: Main thread enters synchronized block and calls wait()**
 ```java
-synchronized (me) {
+synchronized (me) {           // Main thread ACQUIRES lock on 'me'
     while (!me.isCalculated) {
-        me.wait();  // Release lock and wait
+        me.wait();            // Main thread RELEASES lock and goes to SLEEP
     }
-    // Continue after being notified
+```
+- Main thread **had** the lock
+- After `wait()`, main thread **no longer has** the lock
+- Main thread is now sleeping in the "waiting room"
+
+**Step 3: MovieEarning thread can now acquire the lock**
+```java
+synchronized (this) {         // MovieEarning ACQUIRES lock (main released it!)
+    total_earning = ticket_price * tickets_sold;
+    isCalculated = true;
+    this.notify();            // Wakes up main thread (but doesn't give lock yet)
+}                             // NOW lock is released when block ends
+```
+- `notify()` just signals main thread: *"Wake up and get ready!"*
+- Main thread is awake but **waiting for the lock**
+- Only when MovieEarning **exits** the synchronized block, the lock is released
+
+**Step 4: Main thread reacquires lock and continues**
+```java
+        // Main thread wakes up here, reacquires lock
+        me.wait();  // Execution resumes AFTER this line
+    }
+    // Now isCalculated is true, loop exits
+    System.out.println("Total movie earnings: Rs. " + me.total_earning);
 }
 ```
-- Acquires lock on `me` object
-- Checks condition in a **while loop** (not `if`!)
-- Calls `wait()` - this **releases the lock** and puts thread to sleep
-- When notified, thread wakes up, **reacquires the lock**, and continues
 
-**3. Execution Flow:**
+### Visual Execution Flow
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│                    INTER-THREAD COMMUNICATION                   │
-├────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Time   Main Thread              MovieEarning Thread            │
-│  ────   ───────────              ─────────────────              │
-│                                                                 │
-│  T=0    start MovieEarning ──────► Thread created               │
-│  T=1    synchronized(me)                                        │
-│  T=2    ACQUIRES lock on 'me'                                   │
-│  T=3    me.wait() ◄── RELEASES lock                             │
-│  T=4    💤 Sleeping...          synchronized(this)              │
-│  T=5    💤 Sleeping...          WAITING for lock...            │
-│  T=6    💤 Sleeping...          💤 Can't get lock yet          │
-│         ↑ Lock released by      ↓ Now main released it         │
-│         wait(), so ME can       ACQUIRES lock on 'this'        │
-│         continue!               Calculates earnings            │
-│  T=7    💤 Sleeping...          this.notify() ──────────────┐  │
-│  T=8    ◄────────────── Wakes up! ◄────────────────────────┘  │
-│  T=9    WAITING for lock...     Exits synchronized block       │
-│  T=10   ACQUIRES lock           RELEASES lock                   │
-│  T=11   Prints total_earning    Thread ends                     │
-│                                                                 │
-└────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                    DETAILED EXECUTION TIMELINE                    │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  TIME   MAIN THREAD                MOVIEEARNING THREAD           │
+│  ════   ═══════════                ══════════════════            │
+│                                                                   │
+│  T=0    me.start() ─────────────────► Thread created             │
+│                                       │                          │
+│  T=1    synchronized(me)              │ Running Thread.sleep()   │
+│         ACQUIRES lock ✓               │ (outside sync block)     │
+│                                       │                          │
+│  T=2    Checks: isCalculated?         │                          │
+│         FALSE → enters while loop     │                          │
+│                                       │                          │
+│  T=3    me.wait() ─────┐              │                          │
+│         • RELEASES lock│              │                          │
+│         • Goes to SLEEP│              │                          │
+│                        │              │                          │
+│  T=4    💤 SLEEPING    │              │ synchronized(this)       │
+│         (no lock)      │              │ Tries to acquire lock... │
+│                        │              │ ✓ ACQUIRES lock!         │
+│                        │              │ (Main released it!)      │
+│                        │              │                          │
+│  T=5    💤 SLEEPING    │              │ Calculates earnings      │
+│                        │              │ isCalculated = true      │
+│                        │              │                          │
+│  T=6    💤 SLEEPING    │              │ this.notify()            │
+│         ◄──────────────│──────────────│ "Hey main, wake up!"     │
+│         WOKEN UP! ⏰   │              │ (still holds lock)       │
+│         But no lock... │              │                          │
+│         WAITING...     │              │                          │
+│                        │              │                          │
+│  T=7    Still waiting  │              │ } ← Exits sync block     │
+│         for lock...    │              │ RELEASES lock ✓          │
+│                        │              │                          │
+│  T=8    ACQUIRES lock ✓│              │ Thread ends              │
+│         Continues after│              │                          │
+│         wait() line    │              │                          │
+│                        │              │                          │
+│  T=9    Checks: isCalculated?                                    │
+│         TRUE → exits while loop                                  │
+│         Prints: "Rs. 2500"                                       │
+│                                                                   │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 ### Output:
@@ -161,713 +264,390 @@ Total movie earnings: Rs. 2500
 
 ---
 
-### Why Use while Loop Instead of if?
+### The wait() Method Variants
+
+The `wait()` method has three overloaded versions:
+
+#### 1. wait() - Wait Indefinitely
+```java
+public final void wait() throws InterruptedException
+```
+- Causes the thread to wait **indefinitely** until `notify()` or `notifyAll()` is called
+- Use when you don't know how long the wait will be
+
+#### 2. wait(long timeout) - Wait with Timeout
+```java
+public final void wait(long timeout) throws InterruptedException
+```
+- Thread waits for the specified **milliseconds** OR until notified
+- If timeout expires, thread wakes up automatically
+- `wait(0)` is equivalent to `wait()` - waits indefinitely
 
 ```java
-// ❌ BAD: Using if
-if (!me.isCalculated) {
-    me.wait();
-}
-
-// ✅ GOOD: Using while
-while (!me.isCalculated) {
-    me.wait();
-}
-```
-
-**Reason: Spurious Wakeups**
-- A thread can wake up without being notified (JVM behavior)
-- The `while` loop re-checks the condition after waking up
-- This ensures the thread only proceeds when the condition is actually true
-
----
-
-### Key Points about ITC
-
-| Point | Description |
-|-------|-------------|
-| **Lock Required** | Can only call from synchronized context |
-| **wait() releases lock** | Other threads can acquire the lock while this thread waits |
-| **notify() doesn't release** | Lock is released only when exiting synchronized block |
-| **Use while, not if** | Protects against spurious wakeups |
-| **Coordination, not protection** | ITC is for thread coordination, not deadlock prevention |
-
----
-
-## 2. Deadlock in Multithreading
-
-### What is Deadlock?
-
-**Deadlock** occurs when two or more threads are **waiting for each other forever**, and none can proceed.
-
-### Real-Life Analogy: Two Cars at an Intersection 🚗
-
-```
-              ┌───────────────────┐
-              │                   │
-        Car A │ ──► Waiting for   │
-              │     Car B to move │
-              │         ▲         │
-              │         │         │
-              │    ┌────┴────┐    │
-              │    │ DEADLOCK│    │
-              │    └────┬────┘    │
-              │         │         │
-              │         ▼         │
-              │     Waiting for   │ Car B
-              │     Car A to move │ ◄──
-              │                   │
-              └───────────────────┘
-              
-        Both cars wait forever! Neither moves!
-```
-
-### Another Example: Pen and Paper 📝
-
-- **Rahul** holds a **Pen** and needs **Paper** to write
-- **Amit** holds **Paper** and needs a **Pen** to write
-- Both wait forever for what the other has → **Deadlock!**
-
----
-
-### Deadlock Conditions (All 4 Must Exist)
-
-| Condition | Description |
-|-----------|-------------|
-| **1. Mutual Exclusion** | Resources cannot be shared (only one thread can use at a time) |
-| **2. Hold and Wait** | Thread holds one resource while waiting for another |
-| **3. No Preemption** | Resources cannot be forcibly taken from a thread |
-| **4. Circular Wait** | Thread A waits for B, B waits for A (circular chain) |
-
----
-
-### Deadlock Example
-
-```java
-class Resource {
-    // Represents a shared resource
-}
-
-class MyThread1 extends Thread {
-    Resource res1, res2;
-    
-    MyThread1(Resource res1, Resource res2) {
-        this.res1 = res1;
-        this.res2 = res2;
-    }
-    
-    public void run() {
-        synchronized (res1) {  // Step 1: Lock res1 FIRST
-            System.out.println("Thread 1: Locked Resource 1");
-            
-            // Small delay to ensure Thread 2 locks res2
-            try { Thread.sleep(1000); } catch (Exception e) { }
-            
-            System.out.println("Thread 1: Waiting for Resource 2...");
-            synchronized (res2) {  // Step 2: Try to lock res2
-                System.out.println("Thread 1: Locked Resource 2");
-            }
+synchronized (lock) {
+    while (!condition) {
+        lock.wait(5000);  // Wait max 5 seconds
+        // Check if we woke up due to timeout or notification
+        if (!condition) {
+            System.out.println("Timed out, but condition still false!");
         }
     }
 }
+```
 
-class MyThread2 extends Thread {
-    Resource res1, res2;
+#### 3. wait(long timeout, int nanos) - High Precision Wait
+```java
+public final void wait(long timeout, int nanos) throws InterruptedException
+```
+- Provides **nanosecond precision** for timeout
+- Total timeout = `(timeout * 1_000_000) + nanos` nanoseconds
+
+---
+
+### How to Own an Object's Monitor?
+
+To call `wait()`, `notify()`, or `notifyAll()`, the thread **must own the object's monitor**. There are three ways to acquire it:
+
+| Method | Example |
+|--------|---------|
+| **Synchronized instance method** | `public synchronized void method() { this.wait(); }` |
+| **Synchronized block on object** | `synchronized (obj) { obj.wait(); }` |
+| **Synchronized static method** | `public static synchronized void method() { ClassName.class.wait(); }` |
+
+> **Note:** Only ONE thread can own an object's monitor at a time!
+
+---
+
+### Practical Example: Sender-Receiver Synchronization
+
+Let's implement a more robust example - a **data packet transmission** between a Sender and Receiver:
+
+**Problem Statement:**
+- Sender sends data packets one at a time
+- Receiver cannot process until Sender finishes sending
+- Sender cannot send next packet until Receiver has processed the previous one
+
+```java
+public class Data {
+    private String packet;
     
-    MyThread2(Resource res1, Resource res2) {
-        this.res1 = res1;
-        this.res2 = res2;
-    }
-    
-    public void run() {
-        synchronized (res2) {  // Step 1: Lock res2 FIRST (opposite order!)
-            System.out.println("Thread 2: Locked Resource 2");
-            
-            // Small delay to ensure Thread 1 locks res1
-            try { Thread.sleep(1000); } catch (Exception e) { }
-            
-            System.out.println("Thread 2: Waiting for Resource 1...");
-            synchronized (res1) {  // Step 2: Try to lock res1
-                System.out.println("Thread 2: Locked Resource 1");
+    // true = receiver should wait (sender's turn)
+    // false = sender should wait (receiver's turn)
+    private boolean transfer = true;
+
+    // Receiver calls this to receive data
+    public synchronized String receive() {
+        // Wait while sender is preparing data
+        while (transfer) {
+            try {
+                wait();  // Release lock and wait for sender
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.err.println("Thread Interrupted");
             }
         }
-    }
-}
-
-public class DeadlockDemo {
-    public static void main(String[] args) {
-        Resource res1 = new Resource();
-        Resource res2 = new Resource();
         
-        new MyThread1(res1, res2).start();
-        new MyThread2(res1, res2).start();
+        // Data received, now it's sender's turn
+        transfer = true;
+        
+        String returnPacket = packet;
+        notifyAll();  // Wake up sender
+        return returnPacket;
+    }
+
+    // Sender calls this to send data
+    public synchronized void send(String packet) {
+        // Wait while receiver is processing previous data
+        while (!transfer) {
+            try {
+                wait();  // Release lock and wait for receiver
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.err.println("Thread Interrupted");
+            }
+        }
+        
+        // Receiver finished, now send new data
+        transfer = false;
+        
+        this.packet = packet;
+        notifyAll();  // Wake up receiver
     }
 }
 ```
 
-### Explanation of Deadlock
+**How the Synchronization Works:**
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                         DEADLOCK SCENARIO                         │
+│                 SENDER-RECEIVER SYNCHRONIZATION                   │
 ├──────────────────────────────────────────────────────────────────┤
 │                                                                   │
-│  T=0    Thread 1: synchronized(res1) → ACQUIRES res1 lock ✓      │
-│  T=0    Thread 2: synchronized(res2) → ACQUIRES res2 lock ✓      │
+│  INITIAL STATE: transfer = true (sender's turn)                  │
 │                                                                   │
-│  T=1    Thread 1: "Locked Resource 1"                             │
-│         Thread 2: "Locked Resource 2"                             │
-│                                                                   │
-│  T=2    Thread 1: Thread.sleep(1000)                              │
-│         Thread 2: Thread.sleep(1000)                              │
-│                                                                   │
-│  T=3    Thread 1: "Waiting for Resource 2..."                     │
-│         Thread 1: synchronized(res2) → BLOCKED! (res2 held by T2) │
-│                                                                   │
-│         Thread 2: "Waiting for Resource 1..."                     │
-│         Thread 2: synchronized(res1) → BLOCKED! (res1 held by T1) │
-│                                                                   │
-│         ┌─────────────────────────────────────────────────────┐   │
-│         │                                                     │   │
-│         │    Thread 1                    Thread 2             │   │
-│         │       │                           │                 │   │
-│         │       ▼                           ▼                 │   │
-│         │   HOLDS res1 ────────────────► WANTS res1          │   │
-│         │   WANTS res2 ◄──────────────── HOLDS res2          │   │
-│         │       │                           │                 │   │
-│         │       └─────── DEADLOCK! ─────────┘                 │   │
-│         │                                                     │   │
-│         └─────────────────────────────────────────────────────┘   │
-│                                                                   │
-│  T=∞    Both threads wait FOREVER. Program hangs! ❌              │
+│  ┌─────────────────┐                   ┌─────────────────┐       │
+│  │     SENDER      │                   │    RECEIVER     │       │
+│  └────────┬────────┘                   └────────┬────────┘       │
+│           │                                     │                │
+│  Step 1:  │ send("Packet 1")                    │ receive()      │
+│           │ transfer=true? YES                  │ transfer=true? │
+│           │ → Don't wait! ✅                    │ YES → wait() 💤│
+│           │                                     │                │
+│  Step 2:  │ Set packet = "Packet 1"             │ 💤 SLEEPING    │
+│           │ transfer = false                    │                │
+│           │ notifyAll() → wakes receiver        │                │
+│           │                                     │ ◄── WOKEN UP!  │
+│           │                                     │                │
+│  Step 3:  │ ← Returns from send()               │ Reacquires lock│
+│           │                                     │ transfer=false?│
+│           │                                     │ YES → Proceed! │
+│           │                                     │                │
+│  Step 4:  │ send("Packet 2")                    │ Read packet    │
+│           │ transfer=false? NO                  │ transfer = true│
+│           │ → Must wait() 💤                    │ notifyAll()    │
+│           │                                     │                │
+│  Step 5:  │ ◄── WOKEN UP!                       │ Returns packet │
+│           │ transfer=true? YES                  │                │
+│           │ → Continue sending!                 │                │
+│           │                                     │                │
+│  ... and the cycle continues ...                                 │
 │                                                                   │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-### Output (Program Hangs):
-```
-Thread 1: Locked Resource 1
-Thread 2: Locked Resource 2
-Thread 1: Waiting for Resource 2...
-Thread 2: Waiting for Resource 1...
-|
-← Program freezes here! Press Ctrl+C to stop.
-```
-
----
-
-## 3. Preventing Deadlocks
-
-### Strategy 1: Avoid Nested Locks
-
-The simplest way to avoid deadlocks is to **not acquire multiple locks**.
-
+**Sender Implementation:**
 ```java
-// ❌ BAD: Nested locks - deadlock risk
-synchronized (res1) {
-    synchronized (res2) {
-        // Critical section
+public class Sender implements Runnable {
+    private Data data;
+
+    public Sender(Data data) {
+        this.data = data;
     }
-}
 
-// ✅ BETTER: Avoid nested locks if possible
-synchronized (res1) {
-    // Work with res1
-}
-synchronized (res2) {
-    // Work with res2
-}
-```
-
----
-
-### Strategy 2: Lock in Fixed Order
-
-If you **must** use multiple locks, always acquire them in the **same order** everywhere.
-
-```java
-// Thread 1 - locks res1 FIRST, then res2
-synchronized (res1) {
-    synchronized (res2) {
-        // Critical section
-    }
-}
-
-// Thread 2 - SAME ORDER: res1 first, then res2
-synchronized (res1) {   // ✅ Same order as Thread 1
-    synchronized (res2) {
-        // Critical section
-    }
-}
-```
-
-### Fixed Deadlock Example
-
-```java
-class MyThread2 extends Thread {
-    Resource res1, res2;
-    
-    MyThread2(Resource res1, Resource res2) {
-        this.res1 = res1;
-        this.res2 = res2;
-    }
-    
     public void run() {
-        // ✅ FIX: Lock in SAME order as Thread 1 (res1 first!)
-        synchronized (res1) {   // Changed from res2 to res1
-            System.out.println("Thread 2: Locked Resource 1");
-            
-            try { Thread.sleep(1000); } catch (Exception e) { }
-            
-            synchronized (res2) {   // Changed from res1 to res2
-                System.out.println("Thread 2: Locked Resource 2");
+        String[] packets = {
+            "First packet",
+            "Second packet",
+            "Third packet",
+            "Fourth packet",
+            "End"  // Special termination signal
+        };
+
+        for (String packet : packets) {
+            data.send(packet);
+            System.out.println("Sent: " + packet);
+
+            // Simulate processing time
+            try {
+                Thread.sleep(ThreadLocalRandom.current().nextInt(1000, 3000));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
     }
 }
 ```
 
-### Why This Works
-
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                    FIXED: NO DEADLOCK                            │
-├──────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  T=0    Thread 1: synchronized(res1) → ACQUIRES res1 lock ✓      │
-│         Thread 2: synchronized(res1) → BLOCKED (res1 held by T1) │
-│                                                                   │
-│  T=1    Thread 1: "Locked Resource 1"                             │
-│         Thread 2: Waiting for res1...                             │
-│                                                                   │
-│  T=2    Thread 1: synchronized(res2) → ACQUIRES res2 lock ✓      │
-│         Thread 2: Still waiting for res1...                       │
-│                                                                   │
-│  T=3    Thread 1: "Locked Resource 2"                             │
-│         Thread 1: Exits synchronized blocks                       │
-│         Thread 1: RELEASES res2 and res1 locks                    │
-│                                                                   │
-│  T=4    Thread 2: ACQUIRES res1 lock ✓                            │
-│         Thread 2: "Locked Resource 1"                             │
-│                                                                   │
-│  T=5    Thread 2: synchronized(res2) → ACQUIRES res2 lock ✓      │
-│         Thread 2: "Locked Resource 2"                             │
-│         Thread 2: Exits synchronized blocks                       │
-│                                                                   │
-│  ✅ Both threads complete successfully! No deadlock!              │
-│                                                                   │
-└──────────────────────────────────────────────────────────────────┘
-```
-
-### Output (No Deadlock):
-```
-Thread 1: Locked Resource 1
-Thread 1: Locked Resource 2
-Thread 2: Locked Resource 1
-Thread 2: Locked Resource 2
-```
-
----
-
-### Strategy 3: Use Timeout with tryLock()
-
-Using `ReentrantLock.tryLock()` with a timeout prevents indefinite waiting.
-
+**Receiver Implementation:**
 ```java
-if (lock.tryLock(1, TimeUnit.SECONDS)) {
-    try {
-        // Critical section
-    } finally {
-        lock.unlock();
+public class Receiver implements Runnable {
+    private Data data;
+
+    public Receiver(Data data) {
+        this.data = data;
     }
-} else {
-    System.out.println("Could not acquire lock, avoiding deadlock!");
-    // Handle the situation gracefully
-}
-```
 
----
-
-## 4. ReentrantLock: Modern Synchronization
-
-The `java.util.concurrent.locks` package provides **advanced locking mechanisms** with more control than `synchronized`.
-
-### Why Use ReentrantLock?
-
-| Feature | synchronized | ReentrantLock |
-|---------|--------------|---------------|
-| **Lock/Unlock** | Automatic | Manual (`lock()` / `unlock()`) |
-| **tryLock()** | ❌ No | ✅ Yes (avoid blocking) |
-| **Timeout** | ❌ No | ✅ Yes (wait for limited time) |
-| **Fairness** | ❌ No | ✅ Yes (FIFO order option) |
-| **Interruptible** | ❌ No | ✅ Yes (can interrupt waiting thread) |
-| **Multiple Conditions** | ❌ No | ✅ Yes (multiple `Condition` objects) |
-
----
-
-### Important Methods
-
-| Method | Description |
-|--------|-------------|
-| `lock()` | Acquires lock; waits indefinitely if unavailable |
-| `unlock()` | Releases lock (**always call in finally!**) |
-| `tryLock()` | Tries to acquire lock immediately; returns `true`/`false` |
-| `tryLock(timeout, unit)` | Tries to acquire lock within timeout period |
-| `lockInterruptibly()` | Acquires lock but can be interrupted while waiting |
-| `isLocked()` | Returns `true` if lock is held by any thread |
-| `isHeldByCurrentThread()` | Returns `true` if current thread holds the lock |
-| `getHoldCount()` | Returns number of times current thread has acquired lock |
-
----
-
-### Example 1: Basic ReentrantLock Usage
-
-```java
-import java.util.concurrent.locks.ReentrantLock;
-
-class BankAccount {
-    private int balance = 1000;
-    private final ReentrantLock lock = new ReentrantLock();
-
-    public void withdraw(int amount, String name) {
-        System.out.println(name + ": Attempting to withdraw Rs. " + amount);
-        
-        lock.lock();  // Acquire the lock
-        try {
-            System.out.println(name + ": Lock acquired!");
-            System.out.println(name + ": Checking balance...");
-            
-            if (balance >= amount) {
-                // Simulate processing time
-                try { Thread.sleep(1000); } catch (InterruptedException e) { }
-                
-                balance -= amount;
-                System.out.println(name + ": Withdrawal successful!");
-                System.out.println(name + ": New balance: Rs. " + balance);
-            } else {
-                System.out.println(name + ": Insufficient balance!");
-            }
-        } finally {
-            lock.unlock();  // ALWAYS release in finally block!
-            System.out.println(name + ": Lock released.");
-        }
-    }
-}
-
-class Customer extends Thread {
-    BankAccount account;
-    int amount;
-    
-    Customer(BankAccount account, int amount, String name) {
-        super(name);
-        this.account = account;
-        this.amount = amount;
-    }
-    
     public void run() {
-        account.withdraw(amount, getName());
+        // Keep receiving until we get "End" signal
+        for (String receivedMessage = data.receive();
+             !"End".equals(receivedMessage);
+             receivedMessage = data.receive()) {
+
+            System.out.println("Received: " + receivedMessage);
+
+            // Simulate processing time
+            try {
+                Thread.sleep(ThreadLocalRandom.current().nextInt(1000, 3000));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        System.out.println("Transmission complete!");
     }
 }
+```
 
-public class BankApp {
+**Main Application:**
+```java
+public class NetworkSimulation {
     public static void main(String[] args) {
-        BankAccount account = new BankAccount();
+        Data data = new Data();
         
-        Customer rahul = new Customer(account, 800, "Rahul");
-        Customer amit = new Customer(account, 500, "Amit");
-        
-        rahul.start();
-        amit.start();
+        Thread sender = new Thread(new Sender(data));
+        Thread receiver = new Thread(new Receiver(data));
+
+        sender.start();
+        receiver.start();
     }
 }
 ```
 
-### Explanation
-
-**1. Creating the Lock:**
-```java
-private final ReentrantLock lock = new ReentrantLock();
+**Output:**
 ```
-- Create a single lock instance for the shared resource
-- `final` ensures the lock object itself isn't changed
-
-**2. Acquiring the Lock:**
-```java
-lock.lock();  // Blocks until lock is available
-try {
-    // Critical section
+Sent: First packet
+Received: First packet
+Sent: Second packet
+Received: Second packet
+Sent: Third packet
+Received: Third packet
+Sent: Fourth packet
+Received: Fourth packet
+Sent: End
+Transmission complete!
 ```
-- If lock is available, thread acquires it immediately
-- If lock is held by another thread, this thread **waits**
 
-**3. Releasing the Lock (CRITICAL!):**
-```java
-} finally {
-    lock.unlock();  // MUST be in finally block!
-}
-```
-- **ALWAYS** release in a `finally` block
-- Without `finally`, if an exception occurs, the lock is never released → **other threads wait forever!**
+### Why This Example Works
 
-### Output:
+| Principle | Implementation |
+|-----------|----------------|
+| **Bidirectional synchronization** | `transfer` flag alternates between sender and receiver |
+| **No busy waiting** | Both threads use `wait()` instead of polling |
+| **Proper lock handling** | Methods are `synchronized`, ensuring mutual exclusion |
+| **notifyAll() used** | Wakes up the other thread reliably |
+| **while loop for wait()** | Protects against spurious wakeups |
+
+> **💡 Pro Tip:** This is the classic **Producer-Consumer pattern** with a single-item buffer. For production systems, consider using `BlockingQueue` from `java.util.concurrent` which handles all this complexity for you!
+
+### A Note on Modern Alternatives
+
+While `wait()`, `notify()`, and `notifyAll()` are fundamental to understanding Java concurrency, they are **low-level APIs**. Modern Java provides higher-level mechanisms that are often simpler and less error-prone:
+
+| Modern Alternative | Use Case |
+|-------------------|----------|
+| `BlockingQueue` | Producer-consumer patterns (handles wait/notify internally) |
+| `Lock` + `Condition` | More flexible than synchronized + wait/notify |
+| `Semaphore` | Controlling access to limited resources |
+| `CountDownLatch` | Waiting for N operations to complete |
+| `CompletableFuture` | Async programming with chaining |
+
+> **Good Practice:** Learn `wait()` and `notify()` to understand how synchronization works internally, but prefer `java.util.concurrent` utilities for production code!
+
+---
+
+## 🔍 Deep Dive: The Internals of wait() and notify()
+
+### 1. The Paradox of wait()
+
+**Question:** If `wait()` pauses the thread, how does it release the lock?
+
+**Answer:** `wait()` is not a simple "sleep" command. It is a complex, **atomic sequence** of three steps performed by the JVM:
+
+1. **Release Lock:** The thread strictly gives up its ownership of the monitor (lock).
+   - *Why?* If it kept the lock while sleeping, no other thread (like the Producer) could enter the synchronized block to do work or call `notify()`. This would cause an instant **Deadlock**.
+
+2. **Enter Wait Set:** The thread is moved to a special internal queue called the "Wait Set."
+
+3. **Sleep:** The thread pauses execution and stops competing for CPU time.
+
+> **Note:** This is why `wait()` must be called inside a `synchronized` block. You cannot release a lock you do not own. If you try, Java throws `IllegalMonitorStateException`.
+
+---
+
+### 2. The Lifecycle of a Notification
+
+**Question:** Does `notify()` immediately start the waiting thread?
+
+**Answer:** No. "Waking up" is not the same as "Running."
+
+1. **The Signal:** Thread A calls `notify()`.
+2. **The Move:** The JVM picks a thread (Thread B) from the **Wait Set** and moves it to the **Entry Set** (the "Hallway").
+3. **The Block:** Thread B is now awake but **BLOCKED**. It cannot run yet because Thread A **still holds the lock**.
+4. **The Handover:**
+   - Thread A exits the `synchronized` block (releases lock).
+   - Thread B competes with other threads to **re-acquire** the lock.
+5. **The Resume:** Once Thread B gets the lock, it resumes execution *exactly* at the line following `wait()`.
+
+**Visual State Transition:**
+
 ```
-Rahul: Attempting to withdraw Rs. 800
-Amit: Attempting to withdraw Rs. 500
-Rahul: Lock acquired!
-Rahul: Checking balance...
-Rahul: Withdrawal successful!
-Rahul: New balance: Rs. 200
-Rahul: Lock released.
-Amit: Lock acquired!
-Amit: Checking balance...
-Amit: Insufficient balance!
-Amit: Lock released.
+[RUNNING] -> calls wait() -> [WAITING] (In Wait Set)
+                                  ↓
+                             calls notify()
+                                  ↓
+                             [BLOCKED] (In Entry Set, waiting for lock)
+                                  ↓
+                             Acquires Lock
+                                  ↓
+                             [RUNNING] (Resumes code)
 ```
 
 ---
 
-### Example 2: Avoiding Deadlock with tryLock()
+### 3. Critical Edge Cases
+
+#### A. The "Lost Notification" Problem
+
+If a Producer calls `notify()` *before* the Consumer calls `wait()`, the signal is lost forever. The Consumer will wait indefinitely because it missed the "wake up" call.
+
+**Fix:** Always use a boolean flag (e.g., `isDataReady`) to track the state. The Consumer should check this flag *before* waiting.
+
+#### B. Spurious Wakeups (Why we use `while`)
+
+Rarely, the OS might wake up a waiting thread *without* a notification.
+
+- **The Danger:** If you use `if`, the thread wakes up, assumes data is ready, and crashes when it finds an empty buffer.
+- **The Fix:** Use `while`. This forces the thread to **re-check the condition** after waking up. If it was a fake wakeup, the condition is still false, and it goes back to sleep.
 
 ```java
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.TimeUnit;
-
-class MyThread1 extends Thread {
-    private final ReentrantLock lock1, lock2;
-
-    MyThread1(ReentrantLock lock1, ReentrantLock lock2) {
-        super("Thread-1");
-        this.lock1 = lock1;
-        this.lock2 = lock2;
+// ✅ THE GOLDEN PATTERN
+synchronized (lock) {
+    while (!condition) {  // Loop handles Spurious Wakeups
+        lock.wait();      // Releases lock here, Re-acquires on wakeup
     }
-
-    @Override
-    public void run() {
-        try {
-            // Try to acquire lock1 with 1 second timeout
-            if (lock1.tryLock(1, TimeUnit.SECONDS)) {
-                try {
-                    System.out.println(getName() + ": Locked Resource 1");
-                    Thread.sleep(500);  // Simulate work
-
-                    // Try to acquire lock2 with 1 second timeout
-                    if (lock2.tryLock(1, TimeUnit.SECONDS)) {
-                        try {
-                            System.out.println(getName() + ": Locked Resource 2");
-                            System.out.println(getName() + ": Doing work with both resources...");
-                        } finally {
-                            lock2.unlock();
-                            System.out.println(getName() + ": Released Resource 2");
-                        }
-                    } else {
-                        // ✅ Could not get lock2, back off gracefully
-                        System.out.println(getName() + ": Could not get Resource 2, backing off!");
-                    }
-                } finally {
-                    lock1.unlock();
-                    System.out.println(getName() + ": Released Resource 1");
-                }
-            } else {
-                System.out.println(getName() + ": Could not get Resource 1, skipping!");
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-}
-
-class MyThread2 extends Thread {
-    private final ReentrantLock lock1, lock2;
-
-    MyThread2(ReentrantLock lock1, ReentrantLock lock2) {
-        super("Thread-2");
-        this.lock1 = lock1;
-        this.lock2 = lock2;
-    }
-
-    @Override
-    public void run() {
-        try {
-            // Trying opposite order - would normally cause deadlock!
-            if (lock2.tryLock(1, TimeUnit.SECONDS)) {
-                try {
-                    System.out.println(getName() + ": Locked Resource 2");
-                    Thread.sleep(500);
-
-                    if (lock1.tryLock(1, TimeUnit.SECONDS)) {
-                        try {
-                            System.out.println(getName() + ": Locked Resource 1");
-                            System.out.println(getName() + ": Doing work with both resources...");
-                        } finally {
-                            lock1.unlock();
-                            System.out.println(getName() + ": Released Resource 1");
-                        }
-                    } else {
-                        // ✅ Could not get lock1, back off gracefully
-                        System.out.println(getName() + ": Could not get Resource 1, backing off!");
-                    }
-                } finally {
-                    lock2.unlock();
-                    System.out.println(getName() + ": Released Resource 2");
-                }
-            } else {
-                System.out.println(getName() + ": Could not get Resource 2, skipping!");
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-}
-
-public class DeadlockPrevention {
-    public static void main(String[] args) {
-        ReentrantLock lock1 = new ReentrantLock();
-        ReentrantLock lock2 = new ReentrantLock();
-
-        new MyThread1(lock1, lock2).start();
-        new MyThread2(lock1, lock2).start();
-    }
+    // Process data
 }
 ```
-
-### Explanation
-
-**1. tryLock() with Timeout:**
-```java
-if (lock1.tryLock(1, TimeUnit.SECONDS)) {
-    // Got the lock!
-} else {
-    // Couldn't get lock in 1 second, do something else
-}
-```
-- Thread tries to acquire lock for **maximum 1 second**
-- If successful, returns `true` and thread proceeds
-- If timeout expires, returns `false` and thread can **back off gracefully**
-
-**2. Why This Prevents Deadlock:**
-- With `synchronized`, threads wait **forever** for a lock
-- With `tryLock(timeout)`, threads **give up** after waiting too long
-- The thread that backs off can retry later or do alternative work
-
-### Output:
-```
-Thread-1: Locked Resource 1
-Thread-2: Locked Resource 2
-Thread-1: Could not get Resource 2, backing off!
-Thread-1: Released Resource 1
-Thread-2: Could not get Resource 1, backing off!
-Thread-2: Released Resource 2
-```
-
-**Notice:** Both threads complete! No deadlock! They simply backed off when they couldn't get the second resource.
 
 ---
-
-## 5. java.util.concurrent Package Overview
-
-Java provides a comprehensive set of **high-level concurrency utilities**:
-
-### Locks
-
-| Class | Description | Use Case |
-|-------|-------------|----------|
-| `ReentrantLock` | Explicit lock with tryLock, timeout | Fine-grained control |
-| `ReentrantReadWriteLock` | Separate read and write locks | Read-heavy workloads |
-| `StampedLock` | Optimistic locking | High-performance reads |
-
-### Synchronizers
-
-| Class | Description | Use Case |
-|-------|-------------|----------|
-| `Semaphore` | Controls N threads accessing resource | Connection pool |
-| `CountDownLatch` | Waits for N operations to complete | Startup initialization |
-| `CyclicBarrier` | Threads wait for each other at barrier | Parallel processing |
-
-### Executors (Thread Pools)
-
-| Interface/Class | Description | Use Case |
-|----------------|-------------|----------|
-| `ExecutorService` | Manages thread pools | Async task execution |
-| `ScheduledExecutorService` | Delayed/periodic tasks | Scheduled jobs |
-| `CompletableFuture` | Async computation with chaining | Modern async code |
-
-### Concurrent Collections
-
-| Class | Description | Use Case |
-|-------|-------------|----------|
-| `ConcurrentHashMap` | Thread-safe map | Shared cache |
-| `CopyOnWriteArrayList` | Thread-safe list (read-heavy) | Config lists |
-| `BlockingQueue` | Producer-consumer queues | Task queues |
-
-### Atomic Classes
-
-| Class | Description | Use Case |
-|-------|-------------|----------|
-| `AtomicInteger` | Lock-free int operations | Counters |
-| `AtomicLong` | Lock-free long operations | High-performance counters |
-| `AtomicReference` | Lock-free object references | Non-blocking algorithms |
-
----
-
 ## Summary
 
-### Quick Reference: When to Use What?
+In this part, we covered everything about **Inter-Thread Communication** (ITC):
 
-| Scenario | Solution |
-|----------|----------|
-| Threads need to wait for each other | `wait()` / `notify()` / `notifyAll()` |
-| Avoid deadlock with synchronized | Lock resources in consistent order |
-| Need tryLock or timeout | `ReentrantLock` |
-| Back off if lock unavailable | `tryLock(timeout, unit)` |
-| High-performance counters | `AtomicInteger` / `AtomicLong` |
-| Thread-safe collections | `ConcurrentHashMap`, etc. |
+### What We Learned
 
-### Key Takeaways
+| Topic | Key Takeaway |
+|-------|--------------|
+| **wait() and notify()** | Mechanism for threads to cooperate instead of running independently |
+| **wait() releases lock** | Thread gives up the lock and enters the Wait Set |
+| **notify() doesn't release** | Only signals the waiting thread; lock released when exiting synchronized block |
+| **while loop, not if** | Protects against spurious wakeups |
+| **wait() variants** | `wait()`, `wait(timeout)`, `wait(timeout, nanos)` |
+| **Sender-Receiver pattern** | Practical bidirectional synchronization example |
+| **Modern alternatives** | `BlockingQueue`, `Lock+Condition`, `Semaphore`, etc. |
 
-1. ✅ **Inter-Thread Communication** uses `wait()`, `notify()`, `notifyAll()` for thread coordination
-2. ✅ **Deadlock** occurs when threads wait for each other's locks forever
-3. ✅ **Prevent deadlocks** by locking resources in consistent order
-4. ✅ **ReentrantLock** provides more control than `synchronized`
-5. ✅ **tryLock() with timeout** prevents indefinite waiting
-6. ✅ **Always unlock in finally block** to prevent resource leaks
-7. ⚠️ **java.util.concurrent** provides high-level utilities for complex scenarios
+### The Golden Pattern
 
----
-
-### Best Practices Summary
-
-```
-┌────────────────────────────────────────────────────────────────┐
-│                 SYNCHRONIZATION BEST PRACTICES                  │
-├────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ✅ DO:                                                         │
-│  • Synchronize only the minimum necessary code                  │
-│  • Always lock resources in a consistent order                  │
-│  • Use tryLock() with timeout for deadlock prevention          │
-│  • Release locks in finally blocks                              │
-│  • Use while loop with wait(), not if                          │
-│  • Consider java.util.concurrent utilities first               │
-│                                                                 │
-│  ❌ DON'T:                                                       │
-│  • Don't hold locks longer than necessary                       │
-│  • Don't call unknown code while holding a lock                │
-│  • Don't ignore InterruptedException                           │
-│  • Don't use String or Integer as lock objects                 │
-│  • Don't assume thread scheduling order                        │
-│                                                                 │
-└────────────────────────────────────────────────────────────────┘
+```java
+synchronized (lock) {
+    while (!condition) {  // Loop handles Spurious Wakeups
+        lock.wait();      // Releases lock here, Re-acquires on wakeup
+    }
+    // Process data
+}
 ```
 
 ---
 
 ### What's Next?
 
-In future articles, we'll explore:
-- **Thread Pools** with `ExecutorService`
-- **Callable and Future** for returning values from threads
-- **CompletableFuture** for modern async programming
+In **Part 3**, we'll explore:
+- **Deadlocks** - What they are and how to prevent them
+- **ReentrantLock** - Modern synchronization with more control
+- **java.util.concurrent** - High-level concurrency utilities
+
+👉 [Continue to Part 3: Deadlocks, ReentrantLock and Modern Concurrency](/posts/java-synchronization-part3/)
 
 ---
 
 *Happy Thread-Safe Coding! 🔒🧵*
+

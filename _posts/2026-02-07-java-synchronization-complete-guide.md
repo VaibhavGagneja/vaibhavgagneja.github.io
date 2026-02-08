@@ -739,6 +739,191 @@ Total seats left: 4
 
 ---
 
+### Another Example: Bank ATM Withdrawal
+
+Let's see another practical example - multiple ATM machines accessing a shared bank account balance:
+
+```java
+class ATM {
+    // STATIC variable - shared account balance across ALL ATM machines
+    static int accountBalance = 50000;
+
+    // STATIC SYNCHRONIZED method - locks the CLASS, not the ATM instance
+    static synchronized void withdraw(int amount, String atmLocation) {
+        System.out.println(atmLocation + " attempting to withdraw Rs." + amount);
+        
+        if (accountBalance >= amount) {
+            System.out.println(atmLocation + " withdrawal approved");
+            accountBalance = accountBalance - amount;
+            System.out.println(atmLocation + " transaction complete. Balance: Rs." + accountBalance);
+        } else {
+            System.err.println(atmLocation + " insufficient funds!");
+            System.err.println("Available balance: Rs." + accountBalance);
+        }
+        System.out.println("---");
+    }
+}
+
+class ATMThread extends Thread {
+    String atmLocation;
+    int amount;
+
+    ATMThread(String atmLocation, int amount) {
+        this.atmLocation = atmLocation;
+        this.amount = amount;
+    }
+
+    public void run() {
+        ATM.withdraw(amount, atmLocation);
+    }
+}
+
+public class BankDemo {
+    public static void main(String[] args) {
+        // Multiple ATM machines (different objects) accessing SAME account
+        ATM atm1 = new ATM();  // ATM at Mall
+        ATM atm2 = new ATM();  // ATM at Railway Station
+
+        // Person 1 at Mall ATM wants Rs.30000
+        ATMThread t1 = new ATMThread("Mall ATM", 30000);
+        t1.start();
+
+        // Person 2 at Railway Station ATM wants Rs.25000
+        ATMThread t2 = new ATMThread("Station ATM", 25000);
+        t2.start();
+
+        // Person 3 at Mall ATM wants Rs.10000
+        ATMThread t3 = new ATMThread("Mall ATM", 10000);
+        t3.start();
+
+        // Person 4 at Station ATM wants Rs.15000
+        ATMThread t4 = new ATMThread("Station ATM", 15000);
+        t4.start();
+    }
+}
+```
+
+**Output:**
+```
+Mall ATM attempting to withdraw Rs.30000
+Mall ATM withdrawal approved
+Mall ATM transaction complete. Balance: Rs.20000
+---
+Station ATM attempting to withdraw Rs.25000
+Station ATM insufficient funds!
+Available balance: Rs.20000
+---
+Mall ATM attempting to withdraw Rs.10000
+Mall ATM withdrawal approved
+Mall ATM transaction complete. Balance: Rs.10000
+---
+Station ATM attempting to withdraw Rs.15000
+Station ATM insufficient funds!
+Available balance: Rs.10000
+---
+```
+
+**Why Can't We Use Other Approaches?**
+
+Let's understand why `static synchronized` is the **only correct solution** here:
+
+**❌ Approach 1: Just Static Method (No Synchronization)**
+```java
+static void withdraw(int amount, String atmLocation) {  // NO synchronized
+    if (accountBalance >= amount) {
+        accountBalance = accountBalance - amount;  // Race condition!
+    }
+}
+```
+- **Problem:** Multiple threads can enter the method **simultaneously**
+- Both ATMs check balance at the same time, both see Rs.50,000
+- Both withdraw, balance becomes **negative**
+- **Result: Data corruption!** ❌
+
+**❌ Approach 2: Instance Synchronized Method (Not Static)**
+```java
+synchronized void withdraw(int amount, String atmLocation) {  // Instance sync
+    if (accountBalance >= amount) {
+        accountBalance = accountBalance - amount;
+    }
+}
+```
+- **Problem:** Each ATM object (`atm1`, `atm2`) has its **own lock**
+- Thread at `atm1` acquires lock of `atm1` object → enters method
+- Thread at `atm2` acquires lock of `atm2` object → **also enters method simultaneously!**
+- Both modify the **same static variable** at once
+- **Result: Race condition still exists!** ❌
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│           WHY INSTANCE SYNCHRONIZED FAILS FOR STATIC DATA       │
+├────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   atm1 Object                    atm2 Object                   │
+│   ┌──────────────┐               ┌──────────────┐              │
+│   │  Lock: 🔒    │               │  Lock: 🔒    │              │
+│   │  Thread-1    │               │  Thread-2    │              │
+│   │  (INSIDE)    │               │  (INSIDE)    │              │
+│   └──────┬───────┘               └──────┬───────┘              │
+│          │                              │                       │
+│          └──────────┬───────────────────┘                       │
+│                     ▼                                           │
+│          ┌─────────────────────┐                                │
+│          │  STATIC VARIABLE    │                                │
+│          │  accountBalance     │ ◄── BOTH modifying at once!   │
+│          │  (SHARED DATA)      │                                │
+│          └─────────────────────┘                                │
+│                                                                 │
+│   Two different locks → Two threads inside → RACE CONDITION!   │
+│                                                                 │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**✅ Approach 3: Static Synchronized Method (Correct!)**
+```java
+static synchronized void withdraw(int amount, String atmLocation) {
+    if (accountBalance >= amount) {
+        accountBalance = accountBalance - amount;  // Thread-safe!
+    }
+}
+```
+- **Solution:** Lock is on the **Class object** (`ATM.class`), not instance
+- There's only **ONE class object** regardless of how many ATM instances exist
+- All threads compete for the **same single lock**
+- Only one thread can execute at a time
+- **Result: Thread-safe!** ✅
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│           HOW STATIC SYNCHRONIZED PROTECTS STATIC DATA          │
+├────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│                    ATM.class (Single Lock)                     │
+│                    ┌─────────────────────┐                      │
+│                    │      Lock: 🔒       │                      │
+│                    │                     │                      │
+│                    │   Thread-1 (INSIDE) │                      │
+│                    │   Thread-2 (WAITING)│                      │
+│                    │   Thread-3 (WAITING)│                      │
+│                    │   Thread-4 (WAITING)│                      │
+│                    └──────────┬──────────┘                      │
+│                               │                                 │
+│                               ▼                                 │
+│                    ┌─────────────────────┐                      │
+│                    │  STATIC VARIABLE    │                      │
+│                    │  accountBalance     │ ◄── Only ONE thread │
+│                    │  (SHARED DATA)      │     modifies at once│
+│                    └─────────────────────┘                      │
+│                                                                 │
+│   One lock for ALL → Only one thread inside → THREAD-SAFE!     │
+│                                                                 │
+└────────────────────────────────────────────────────────────────┘
+```
+
+> **Rule of Thumb:** If you're protecting **static data**, you need **static synchronization**. Instance synchronization protects instance data only!
+
+---
+
 ### Comparison: Instance vs Static Synchronization
 
 | Aspect | Instance Synchronized | Static Synchronized |
