@@ -2,7 +2,7 @@
 title: "Java Concurrency: ExecutorService, Callable, Future and CompletableFuture"
 description: Master modern Java concurrency with Thread Pools, ExecutorService, Callable, Future, and CompletableFuture for async programming
 author: Vaibhav Gagneja
-date: 2026-02-07 19:00:00 +0530
+date: 2026-02-05 12:00:00 +0530
 categories: [Development, Java]
 tags: [java, concurrency, executorservice, completablefuture, async, thread-pool]
 toc: true
@@ -938,6 +938,15 @@ FINAL STATUS: Order ORD-2024-001 - PAID - Confirmed!
 │                                                                 │
 └────────────────────────────────────────────────────────────────┘
 ```
+
+### What's Next?
+
+Continue your concurrency journey:
+- 👉 [volatile, Atomics & Java Memory Model](/posts/java-volatile-atomics/) — Visibility, CAS, lock-free programming
+- 👉 [Concurrent Collections](/posts/java-concurrent-collections/) — ConcurrentHashMap, BlockingQueue
+- 👉 [Synchronizers](/posts/java-synchronizers/) — CountDownLatch, Semaphore, CyclicBarrier, Locks
+- 👉 [Fork/Join & Virtual Threads](/posts/java-forkjoin-virtual-threads/) — Parallelism & Project Loom
+- 👉 [Concurrency Patterns & Best Practices](/posts/java-concurrency-patterns/) — Series finale
 
 ---
 

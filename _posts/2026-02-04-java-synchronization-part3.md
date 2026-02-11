@@ -2,7 +2,7 @@
 title: "Java Synchronization Part 3: Deadlocks, ReentrantLock and Modern Concurrency"
 description: Master deadlock prevention, ReentrantLock, and java.util.concurrent utilities for robust multithreaded applications
 author: Vaibhav Gagneja
-date: 2026-02-08 12:00:00 +0530
+date: 2026-02-04 12:00:00 +0530
 categories: [Development, Java]
 tags: [java, synchronization, deadlock, reentrantlock, concurrency]
 toc: true
@@ -679,10 +679,9 @@ Java provides a comprehensive set of **high-level concurrency utilities**:
 
 ### What's Next?
 
-In future articles, we'll explore:
-- **Thread Pools** with `ExecutorService`
-- **Callable and Future** for returning values from threads
-- **CompletableFuture** for modern async programming
+Continue your concurrency journey:
+- 👉 [ExecutorService & CompletableFuture](/posts/java-executorservice-completablefuture/) — Thread Pools, Callable, Future, async programming
+- 👉 [volatile, Atomics & Java Memory Model](/posts/java-volatile-atomics/) — Visibility, CAS, lock-free programming
 
 ---
 

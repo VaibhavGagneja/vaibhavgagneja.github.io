@@ -2,7 +2,7 @@
 title: "Java Synchronization Part 1: Thread Safety, Synchronized Methods and Blocks"
 description: Master Java synchronization fundamentals - understand race conditions, synchronized methods, synchronized blocks, and static synchronization with detailed examples
 author: Vaibhav Gagneja
-date: 2026-02-07 17:00:00 +0530
+date: 2026-02-02 12:00:00 +0530
 categories: [Development, Java]
 tags: [java, synchronization, multithreading, concurrency, thread-safety]
 toc: true

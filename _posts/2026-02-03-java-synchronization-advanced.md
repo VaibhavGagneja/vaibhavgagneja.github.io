@@ -2,7 +2,7 @@
 title: "Java Synchronization Part 2: Inter-Thread Communication"
 description: Master wait(), notify() and notifyAll() for thread coordination with practical examples and deep-dive internals
 author: Vaibhav Gagneja
-date: 2026-02-07 18:00:00 +0530
+date: 2026-02-03 12:00:00 +0530
 categories: [Development, Java]
 tags: [java, synchronization, deadlock, reentrantlock, concurrency, wait-notify]
 toc: true

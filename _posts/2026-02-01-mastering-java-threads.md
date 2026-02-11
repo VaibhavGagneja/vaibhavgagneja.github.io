@@ -2,7 +2,7 @@
 title: "Mastering Java Threads: A Complete Guide to Processes, Multithreading, and Lifecycle"
 description: Deep dive into processes, threads, multithreading concepts, and thread lifecycle in Java with practical examples
 author: Vaibhav Gagneja
-date: 2026-02-07 16:00:00 +0530
+date: 2026-02-01 12:00:00 +0530
 categories: [Development, Java]
 tags: [java, threads, multithreading, concurrency, processes]
 toc: true
