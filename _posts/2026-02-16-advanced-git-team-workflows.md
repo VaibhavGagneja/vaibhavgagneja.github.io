@@ -2,7 +2,7 @@
 title: "Advanced Git for Teams: Conflicts, Recovery, Stash, Bisect, and Beyond"
 description: Master Git collaboration — resolve merge and rebase conflicts, recover lost work with reflog, stash and worktrees, cherry-pick, bisect bugs, squash commits, and tag releases like a pro.
 author: Vaibhav Gagneja
-date: 2026-02-17 23:00:00 +0530
+date: 2026-02-16 23:00:00 +0530
 categories: [Development, Git]
 tags: [git, github, version-control, advanced, team-workflow, conflicts, rebase, stash, bisect, cherry-pick]
 toc: true
@@ -71,7 +71,7 @@ git push origin add_contrib
 # 5. Open a Pull Request from YOUR fork → upstream's main
 ```
 
-> **🔑 Key Point:** You never push directly to the upstream repo. Your fork is the staging area, and Pull Requests are the gates.
+> **Key Point:** You never push directly to the upstream repo. Your fork is the staging area, and Pull Requests are the gates.
 
 ### Cleaning Up After a PR
 
@@ -120,7 +120,7 @@ git checkout abc1234   # Detached HEAD
 git switch main        # Back to normal
 ```
 
-> **⚠️ Warning:** Commits made in detached HEAD state will be garbage-collected if you don't attach them to a branch. If you realize you've been working in detached HEAD, create a branch immediately: `git switch -c rescue-branch`.
+> **Warning:** Commits made in detached HEAD state will be garbage-collected if you don't attach them to a branch. If you realize you've been working in detached HEAD, create a branch immediately: `git switch -c rescue-branch`.
 
 ---
 
@@ -192,9 +192,9 @@ Since `git merge` accepts a "commitish" (anything that resolves to a commit — 
 git merge HEAD@{3}
 ```
 
-One command instead of three `cat-file` calls. The more you know! 🌈
+One command instead of three `cat-file` calls.
 
-> **🔑 Key Point:** Almost nothing is truly lost in Git. As long as the reflog entry exists, you can recover it. The reflog is pruned after ~90 days, so don't rely on it forever.
+> **Key Point:** Almost nothing is truly lost in Git. As long as the reflog entry exists, you can recover it. The reflog is pruned after ~90 days, so don't rely on it forever.
 
 ---
 
@@ -282,7 +282,7 @@ git add customers/all.csv
 git commit -m "E: resolve conflict — keep both customer records"
 ```
 
-> **Best Practice:** Git will let you commit conflict markers accidentally. Always double-check with `git diff --staged` or search for `<<<<<<<` before committing.
+> **Note:** Git will let you commit conflict markers accidentally. Always double-check with `git diff --staged` or search for `<<<<<<<` before committing.
 
 ---
 
@@ -312,7 +312,7 @@ git commit -m "H: resolve conflicts — keep theirs for customers, ours for part
 | `--ours` | The branch you're **on** (merging into) | The branch you're rebasing **onto** |
 | `--theirs` | The branch being **merged** | The branch being **rebased** (your feature branch) |
 
-> **⚠️ Warning:** Notice the semantics **flip** during a rebase! This is because rebase checks out the target branch and replays your commits on top. So "ours" becomes the target, and "theirs" becomes your feature branch. This trips up even experienced developers.
+> **Warning:** Notice the semantics **flip** during a rebase! This is because rebase checks out the target branch and replays your commits on top. So "ours" becomes the target, and "theirs" becomes your feature branch. This trips up even experienced developers.
 
 ---
 
@@ -435,7 +435,7 @@ If you made a mistake in your recorded resolution:
 rm -rf .git/rr-cache
 ```
 
-> **🔑 Key Point:** RERERE is especially useful when you maintain long-running branches or when multiple feature branches conflict with main in similar ways. Enable it once and forget about it.
+> **Key Point:** RERERE is especially useful when you maintain long-running branches or when multiple feature branches conflict with main in similar ways. Enable it once and forget about it.
 
 ---
 
@@ -499,7 +499,7 @@ K: add security scanners (credit cards, SSNs, phone numbers)
 └────────────────────────────────────────────────────────────┘
 ```
 
-> **⚠️ Warning:** Squashing is a destructive operation — it rewrites history. Never squash commits that have already been pushed to a shared branch that others are working on. Do it on **your own feature branch** before the PR.
+> **Warning:** Squashing is a destructive operation — it rewrites history. Never squash commits that have already been pushed to a shared branch that others are working on. Do it on **your own feature branch** before the PR.
 
 ### Force Pushing After a Squash
 
@@ -570,7 +570,7 @@ Yes, popping a stash can cause conflicts! If your working directory has changed 
 | Longer parallel work (hours to days) | New branch |
 | Working on two features simultaneously | Worktrees (see Section 14) |
 
-> **🔑 Key Point:** Stash is a clipboard, not a filing cabinet. If you find yourself with more than 2-3 stash entries, you should probably be using branches or worktrees instead.
+> **Key Point:** Stash is a clipboard, not a filing cabinet. If you find yourself with more than 2-3 stash entries, you should probably be using branches or worktrees instead.
 
 ---
 
@@ -615,7 +615,7 @@ git revert <commit-hash>
 - **`reset`**: You're on your own branch, cleaning up before a PR. No one else cares about these commits.
 - **`revert`**: The commit is on `main` (or any shared branch). You need to preserve history and not break your teammates' repos.
 
-> **Best Practice:** Always prefer `revert` on shared branches. It's the only safe way to undo changes without rewriting history that others depend on.
+> **Note:** Always prefer `revert` on shared branches. It's the only safe way to undo changes without rewriting history that others depend on.
 
 ---
 
@@ -665,7 +665,7 @@ index abc1234..def5678 100644
 | `+` (green) | Line added |
 | `@@` | Line range (hunk header) |
 
-> **🔑 Key Point:** Make `git diff --staged` a habit before every commit. It's your last chance to catch mistakes before they become part of history.
+> **Key Point:** Make `git diff --staged` a habit before every commit. It's your last chance to catch mistakes before they become part of history.
 
 ---
 
@@ -712,7 +712,7 @@ git cherry-pick --continue
 git cherry-pick --abort
 ```
 
-> **⚠️ Warning:** Cherry-picking creates a **new commit** with a **different hash**. If you later merge the original branch, you may end up with duplicate changes. Use cherry-pick sparingly.
+> **Warning:** Cherry-picking creates a **new commit** with a **different hash**. If you later merge the original branch, you may end up with duplicate changes. Use cherry-pick sparingly.
 
 ---
 
@@ -775,7 +775,7 @@ git bisect run ./scripts/bisect.sh
 # Git runs the script at each step and finds the bad commit automatically!
 ```
 
-> **🔑 Key Point:** `git bisect run` is criminally underused. If you can write a test for the regression, you can automate the entire search. This is especially valuable in large codebases where "was this line present?" isn't the right question — instead you need to actually *run* something.
+> **Key Point:** `git bisect run` is criminally underused. If you can write a test for the regression, you can automate the entire search. This is especially valuable in large codebases where "was this line present?" isn't the right question — instead you need to actually *run* something.
 
 ### After Finding the Bad Commit
 
@@ -802,7 +802,7 @@ You're deep into a feature branch when a P0 bug drops. You could:
 
 1. **Stash** your changes → switch to main → fix → switch back → pop. (Annoying for large changes.)
 2. **Clone** the repo again. (Wastes disk space and re-clones entire history.)
-3. **Use a worktree.** ✅
+3. **Use a worktree.** (This is the right answer.)
 
 ### What Is a Worktree?
 
@@ -855,7 +855,7 @@ git worktree prune
 | **Worktree** | Small (only working files) | Fast | Full (separate directory) |
 | **Clone** | Large (full .git copy) | Slow | Full (separate repo) |
 
-> **Best Practice:** If you find yourself `git stash`-ing more than once a day, consider using worktrees instead.
+> **Note:** If you find yourself `git stash`-ing more than once a day, consider using worktrees instead.
 
 ---
 
@@ -919,7 +919,7 @@ v MAJOR . MINOR . PATCH
 | `1.0.1` → `1.1.0` | New feature, no breaking changes |
 | `1.1.0` → `2.0.0` | Breaking API change |
 
-> **🔑 Key Point:** Tags are "commitish" — anywhere you can use a commit hash, you can use a tag name. This makes them perfect for `git diff v1.0.0 v2.0.0` comparisons, `git checkout v1.0.0` for debugging, and more.
+> **Key Point:** Tags are "commitish" — anywhere you can use a commit hash, you can use a tag name. This makes them perfect for `git diff v1.0.0 v2.0.0` comparisons, `git checkout v1.0.0` for debugging, and more.
 
 ---
 
@@ -1008,7 +1008,7 @@ git push origin --tags
 │                    TEAM GIT RULES                            │
 ├────────────────────────────────────────────────────────────┤
 │                                                              │
-│  ✅ DO:                                                      │
+│  DO:                                                         │
 │  • Rebase your feature branch onto main frequently          │
 │  • Squash commits before opening a PR                       │
 │  • Use descriptive commit messages                          │
@@ -1017,7 +1017,7 @@ git push origin --tags
 │  • Use worktrees for quick parallel work                    │
 │  • Tag releases with semantic versioning                    │
 │                                                              │
-│  ❌ DON'T:                                                    │
+│  DON'T:                                                      │
 │  • Force push to shared branches (main, develop)            │
 │  • Rebase public branches other people are using            │
 │  • Leave stale branches lying around                        │
@@ -1082,4 +1082,14 @@ Git is one of those tools where the basics take an afternoon to learn, but the a
 
 ---
 
-*Happy collaborating! 🤝*
+## Resources
+
+This post is based on my notes from the [Learn Git 2](https://www.boot.dev/courses/learn-git-2) course on Boot.dev. If you're looking for a hands-on, structured way to learn these concepts, I highly recommend starting there — it's the first guide you should look at.
+
+I also found this video walkthrough incredibly helpful:
+
+- [Git for Professionals (YouTube)](https://youtu.be/rH3zE7VlIMs?si=MVgawUvmlvPiz_PH)
+
+---
+
+*Happy collaborating!*
