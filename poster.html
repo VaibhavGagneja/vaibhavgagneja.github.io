@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code & Cloud Academy Poster</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* ===== POSTER ===== */
+        .poster {
+            width: 210mm;
+            height: 297mm;
+            background: #ffffff;
+            color: #1a1a1a;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Subtle dot pattern — hidden for print */
+        .poster::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.03;
+            background-image: radial-gradient(#333 1px, transparent 1px);
+            background-size: 16px 16px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: #ffffff;
+            color: #111827;
+            padding: 2rem 2.5rem 1.75rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+            border-bottom: 3px solid #111827;
+        }
+        .enrollment-badge {
+            display: inline-block;
+            background-color: #f3f4f6;
+            color: #111827;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.35rem 1rem;
+            border-radius: 9999px;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border: 2px solid #111827;
+        }
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            color: #111827;
+        }
+        .header h1 .accent {
+            color: #374151;
+            font-style: italic;
+        }
+
+        /* ===== INSTRUCTOR BADGE ===== */
+        .instructor-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: -1.1rem;
+            position: relative;
+            z-index: 20;
+            flex-shrink: 0;
+        }
+        .instructor-badge {
+            background-color: #f9fafb;
+            border: 2px solid #d1d5db;
+            border-radius: 9999px;
+            padding: 0.5rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .instructor-avatar {
+            background: #f3f4f6;
+            color: #111827;
+            border: 2px solid #111827;
+            border-radius: 9999px;
+            width: 2.75rem;
+            height: 2.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .instructor-info p { margin: 0; }
+        .mentored-by { font-size: 0.6rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.06em; }
+        .instructor-name { font-size: 1.6rem; font-weight: 900; color: #111827; letter-spacing: -0.02em; }
+        .instructor-title { font-size: 0.75rem; color: #374151; font-weight: 600; }
+
+        /* ===== CREDENTIAL TAGLINE in header ===== */
+        .credential-tagline {
+            margin-top: 0.6rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #111827;
+            letter-spacing: 0.02em;
+        }
+        .credential-tagline i {
+            margin-right: 0.35rem;
+            font-size: 0.95rem;
+        }
+
+        /* ===== MAIN CONTENT — stretches to fill ===== */
+        .main-content {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            padding: 1rem 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ===== SECTION TITLE ===== */
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #111827;
+            letter-spacing: -0.02em;
+        }
+        .section-title span {
+            border-bottom: 3px solid #111827;
+            padding-bottom: 0.15rem;
+        }
+
+        /* ===== TRACKS GRID — 3 columns ===== */
+        .tracks-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.85rem;
+        }
+
+        /* ===== TRACK CARD ===== */
+        .track-card {
+            background-color: #f3f4f6;
+            border: 2px solid #d1d5db;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .track-card.highlight {
+            border-color: #111827;
+            border-width: 2.5px;
+        }
+
+        .track-watermark {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.5rem;
+            opacity: 0.06;
+            font-size: 4rem;
+            line-height: 1;
+            color: #374151;
+        }
+
+        .track-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+            background-color: #f3f4f6;
+            color: #111827;
+            border: 2px solid #111827;
+        }
+
+        .track-card h2 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 0.45rem;
+            color: #111827;
+        }
+        .track-card h2 .hl {
+            font-size: 1.4rem;
+            font-weight: 900;
+            text-decoration: underline;
+            text-decoration-thickness: 2.5px;
+            text-underline-offset: 2px;
+        }
+        .track-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .track-card ul li {
+            font-size: 0.95rem;
+            color: #374151;
+            margin-bottom: 0.3rem;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+        .track-card ul li i.fa-check {
+            color: #111827;
+            margin-right: 0.35rem;
+            font-size: 0.75rem;
+            font-weight: 900;
+        }
+
+        /* ===== FEATURES BAR ===== */
+        .features-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            font-size: 1rem;
+            color: #374151;
+            font-weight: 600;
+        }
+        .features-bar div {
+            display: flex;
+            align-items: center;
+        }
+        .features-bar i {
+            color: #111827;
+            margin-right: 0.35rem;
+        }
+
+        /* ===== FOOTER / CTA ===== */
+        .poster-footer {
+            flex-shrink: 0;
+            background: #ffffff;
+            color: #111827;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            border-top: 3px solid #111827;
+        }
+        .poster-footer h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.85rem;
+        }
+        .cta-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+        .cta-phone {
+            display: inline-flex;
+            align-items: center;
+            background: #f3f4f6;
+            color: #111827;
+            padding: 0.65rem 1.85rem;
+            border-radius: 9999px;
+            font-weight: 900;
+            font-size: 1.7rem;
+            text-decoration: none;
+            letter-spacing: 0.01em;
+            border: 3px solid #111827;
+        }
+        .cta-phone i { margin-right: 0.5rem; }
+        .cta-email {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f3f4f6;
+            color: #111827;
+            padding: 0.55rem 1.25rem;
+            border-radius: 9999px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid #111827;
+        }
+        .cta-email i { margin-right: 0.35rem; }
+        .footer-note {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.35rem;
+        }
+
+        /* ================================================================
+           PRINT STYLES
+           ================================================================ */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+            html, body {
+                width: 210mm !important;
+                height: 297mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important;
+                overflow: hidden !important;
+            }
+            .poster {
+                width: 210mm !important;
+                height: 297mm !important;
+                max-width: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+            }
+            .poster::before {
+                display: none !important;
+            }
+            .poster * {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            a { text-decoration: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="poster">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="enrollment-badge">Now Accepting Enrollments • Online & Offline</div>
+            <h1>Code & Cloud <span class="accent">Academy</span></h1>
+            <p class="credential-tagline"><i class="fas fa-university"></i> M.Tech — Punjab Engineering College, Chandigarh</p>
+        </div>
+
+        <!-- Instructor Badge -->
+        <div class="instructor-wrapper">
+            <div class="instructor-badge">
+                <div class="instructor-avatar">VG</div>
+                <div class="instructor-info">
+                    <p class="mentored-by">Mentored by</p>
+                    <p class="instructor-name">Vaibhav Gagneja</p>
+                    <p class="instructor-title">Ex-PwC DevOps Engineer | CKAD Certified</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+
+            <!-- Section Title -->
+            <p class="section-title"><span>What You'll Master</span></p>
+
+            <!-- Tracks Grid — 3 columns -->
+            <div class="tracks-grid">
+
+                <!-- Track 1: Java DSA -->
+                <div class="track-card highlight">
+                    <i class="track-watermark fab fa-java"></i>
+                    <div class="track-icon"><i class="fas fa-code"></i></div>
+                    <h2><span class="hl">Java</span> DSA & Interview Prep</h2>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Core Java & OOPs</li>
+                        <li><i class="fas fa-check"></i> Linear & Non-Linear Data Structures</li>
+                        <li><i class="fas fa-check"></i> Advanced Algos (DP, Graphs)</li>
+                        <li><i class="fas fa-check"></i> 1-on-1 Mock Interviews</li>
+                    </ul>
+                </div>
+
+                <!-- Track 2: DevOps -->
+                <div class="track-card highlight">
+                    <i class="track-watermark fab fa-docker"></i>
+                    <div class="track-icon"><i class="fas fa-cloud"></i></div>
+                    <h2>Enterprise <span class="hl">DevOps</span></h2>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Azure & Cloud Fundamentals</li>
+                        <li><i class="fas fa-check"></i> Docker Containerization</li>
+                        <li><i class="fas fa-check"></i> Kubernetes (AKS & CKAD Prep)</li>
+                        <li><i class="fas fa-check"></i> CI/CD, GitOps & Argo CD</li>
+                    </ul>
+                </div>
+
+                <!-- Track 3: Git & GitHub -->
+                <div class="track-card highlight">
+                    <i class="track-watermark fab fa-git-alt"></i>
+                    <div class="track-icon"><i class="fab fa-github"></i></div>
+                    <h2><span class="hl">Git & GitHub</span> Mastery</h2>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Git Fundamentals & Workflow</li>
+                        <li><i class="fas fa-check"></i> Branching & Merge Strategies</li>
+                        <li><i class="fas fa-check"></i> GitHub Actions & Collaboration</li>
+                        <li><i class="fas fa-check"></i> Real-World Team Projects</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Features -->
+            <div class="features-bar">
+                <div><i class="fas fa-graduation-cap"></i> Covers College Syllabus</div>
+                <div><i class="fas fa-chalkboard-teacher"></i> Online & Offline Classes</div>
+                <div><i class="fas fa-laptop-code"></i> Real-World Projects</div>
+                <div><i class="fas fa-users"></i> Exclusive Discord Community</div>
+            </div>
+
+        </div>
+
+        <!-- Footer / CTA -->
+        <div class="poster-footer">
+            <h3>Ready to upgrade your career?</h3>
+            <div class="cta-row">
+                <a href="tel:+919996175577" class="cta-phone">
+                    <i class="fas fa-phone-volume"></i> +91-9996175577
+                </a>
+                <a href="mailto:vaibhavgagneja@gmail.com" class="cta-email">
+                    <i class="fas fa-envelope"></i> vaibhavgagneja@gmail.com
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
