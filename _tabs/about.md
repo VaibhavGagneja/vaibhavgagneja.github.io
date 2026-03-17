@@ -8,7 +8,7 @@ order: 5
 
 **DevOps Engineer** 
 
-[📄 Download CV](/assets/cv/Vaibhav_Gagneja_CV.pdf){: .btn .btn-primary target="_blank" }
+[📄 Download CV](/assets/cv/Vaibhav_Devops.pdf){: .btn .btn-primary target="_blank" }
 
 ---
 
