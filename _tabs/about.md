@@ -37,6 +37,17 @@ I'm passionate about automating everything and helping teams ship faster with co
 
 ---
 
+## Research Publication
+
+📝 **ES-LSTM: A Hybrid Model for Accurate Time Series Forecasting in Financial Markets**  
+*Published in Digital Finance (Springer Nature), 2026*  
+
+A hybrid approach combining Exponential Smoothing (ES) and Long Short-Term Memory (LSTM) networks for improved stock market prediction accuracy, achieving R² scores of 0.9712 on the S&P 500.
+
+[📄 Read Paper](https://rdcu.be/eZIaF){: .btn .btn-primary target="_blank" }
+
+---
+
 ## Experience & Education
 
 | | |
