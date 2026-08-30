@@ -7,7 +7,6 @@ categories: [DevOps, Git]
 tags: [git, github, version-control, beginners, tutorial]
 image:
   path: https://cdn.hashnode.com/res/hashnode/image/upload/v1743846735090/7dd75171-6294-460e-bac3-0ca0e6f186de.jpeg
-published: false
 ---
 
 # Introduction

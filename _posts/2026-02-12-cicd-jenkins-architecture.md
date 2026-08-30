@@ -8,7 +8,6 @@ tags: [cicd, jenkins, devops, automation, pipelines, continuous-integration, con
 toc: true
 image:
   path: https://images.unsplash.com/photo-1667372393086-9d4001d51cf1
-published: false
 ---
 
 If you've ever wondered how companies like Google, Netflix, or Amazon push code changes to production **hundreds of times a day** without breaking things — the answer is **CI/CD**. And one of the most popular tools to make this happen is **Jenkins**.

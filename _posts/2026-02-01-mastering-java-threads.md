@@ -8,7 +8,6 @@ tags: [java, threads, multithreading, concurrency, processes]
 toc: true
 image:
   path: /assets/photos/mastering.png
-published: false
 ---
 
 In the world of software development, understanding how an operating system handles tasks is crucial for writing efficient, high-performance applications. Whether you are building a simple text editor or a complex banking system, the concepts of **Processes** and **Threads** are the building blocks of concurrency.

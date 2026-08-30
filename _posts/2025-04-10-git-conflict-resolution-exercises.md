@@ -7,7 +7,6 @@ categories: [DevOps, Git]
 tags: [git, version-control, conflict-resolution, tutorial]
 image:
   path: https://cdn.hashnode.com/res/hashnode/image/upload/v1744286268529/e614f545-7628-41d3-999f-314b6f6ae61a.png
-published: false
 ---
 
 ### Setup

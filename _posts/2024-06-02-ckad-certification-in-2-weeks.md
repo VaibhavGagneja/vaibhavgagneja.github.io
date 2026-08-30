@@ -7,7 +7,6 @@ categories: [DevOps, Kubernetes]
 tags: [ckad, kubernetes, certification, devops, cloud-native, cncf]
 image:
   path: https://cdn.hashnode.com/res/hashnode/image/upload/v1717329072620/47b54549-9189-42ab-ad54-b33757b8d286.png
-published: false
 ---
 
 ## Overview

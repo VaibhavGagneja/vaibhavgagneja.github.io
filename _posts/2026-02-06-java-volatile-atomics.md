@@ -8,7 +8,6 @@ tags: [java, volatile, atomic, concurrency, memory-model, cas]
 toc: true
 image:
   path: /assets/photos/synchros.png
-published: false
 ---
 
 In the previous articles, we covered synchronization, locks, and thread pools. But there's an entire class of concurrency bugs that **`synchronized` alone can't explain** — bugs caused by **CPU caching and memory visibility**. Let's dive in!

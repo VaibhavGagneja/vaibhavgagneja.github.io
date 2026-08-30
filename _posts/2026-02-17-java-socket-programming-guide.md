@@ -8,7 +8,6 @@ tags: [java, sockets, networking, tcp, chat-application, multithreading, server-
 toc: true
 image:
   path: https://images.unsplash.com/photo-1558494949-ef010cbdcc31
-published: false
 ---
 
 Networking is the backbone of modern software — from the web browser you're reading this in, to messaging apps, multiplayer games, and microservices talking to each other. At the heart of all network communication in Java lies **Socket Programming**.

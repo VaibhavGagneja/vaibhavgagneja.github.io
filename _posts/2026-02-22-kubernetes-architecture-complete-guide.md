@@ -8,7 +8,6 @@ tags: [kubernetes, k8s, docker, containers, devops, architecture, pods, control-
 toc: true
 image:
   path: https://images.unsplash.com/photo-1667372393086-9d4001d51cf1
-published: false
 ---
 
 You know Docker. You can build images, run containers, and maybe even write a `docker-compose.yml`. But the moment someone says **"we use Kubernetes in production"**, the complexity feels like it jumps 10x.

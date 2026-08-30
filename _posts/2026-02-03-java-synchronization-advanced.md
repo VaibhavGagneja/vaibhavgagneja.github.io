@@ -8,7 +8,6 @@ tags: [java, synchronization, deadlock, reentrantlock, concurrency, wait-notify]
 toc: true
 image:
   path: /assets/photos/synchros.png
-published: false
 ---
 
 In **Part 1**, we covered the fundamentals of synchronization: synchronized methods, synchronized blocks, and static synchronization. Now let's explore the **advanced topics**: inter-thread communication, deadlocks, and modern locking mechanisms.

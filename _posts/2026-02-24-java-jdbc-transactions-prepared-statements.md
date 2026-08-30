@@ -8,7 +8,6 @@ tags: [java, jdbc, database, sql, prepared-statements, callable-statements, stor
 toc: true
 image:
   path: https://images.unsplash.com/photo-1558494949-ef010cbdcc31
-published: false
 ---
 
 In [Part 1](/posts/java-jdbc-fundamentals/), we covered the JDBC fundamentals — establishing connections, executing simple statements, reading results, and handling exceptions. But production database code demands more.

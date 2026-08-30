@@ -8,7 +8,6 @@ tags: [java, networking, udp, datagram, multicast, networkinterface]
 toc: true
 image:
   path: https://images.unsplash.com/photo-1451187580459-43490279c0fa
-published: false
 ---
 
 In [Part 1](/posts/java-networking-urls-basics/) we covered networking fundamentals and URLs. In [Part 2](/posts/java-networking-socket-programming/) we built client-server applications with TCP sockets. Now, in this final part, we explore the **other side of networking**: UDP datagrams, multicasting, and querying network interfaces.

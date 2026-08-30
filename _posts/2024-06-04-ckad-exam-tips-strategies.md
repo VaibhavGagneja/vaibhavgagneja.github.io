@@ -7,7 +7,6 @@ categories: [DevOps, Kubernetes]
 tags: [ckad, kubernetes, certification, devops, cloud-native]
 image:
   path: https://cdn.hashnode.com/res/hashnode/image/upload/v1717427296142/c6bcfaa4-b36b-4afb-be83-1ecdce79ac8f.png
-published: false
 ---
 
 I cleared the Certified Kubernetes Application Developer (CKAD) exam on my first attempt. Despite CKAD being a comparatively tough exam, I managed to pass it in just 14 days. Here's how I did it.

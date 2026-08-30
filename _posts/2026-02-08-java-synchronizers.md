@@ -8,7 +8,6 @@ tags: [java, concurrency, synchronizers, countdownlatch, semaphore, cyclicbarrie
 toc: true
 image:
   path: /assets/photos/synchros.png
-published: false
 ---
 
 So far in this series, we've covered thread synchronization, concurrent collections, and atomic variables. But real-world applications often require more sophisticated **coordination** — waiting for multiple tasks to finish, limiting concurrent access, or synchronizing threads at checkpoints. Java provides a rich set of **synchronizers** for exactly these purposes.

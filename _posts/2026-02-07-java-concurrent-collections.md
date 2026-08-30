@@ -8,7 +8,6 @@ tags: [java, concurrency, concurrent-collections, blocking-queue, concurrenthash
 toc: true
 image:
   path: /assets/photos/synchros.png
-published: false
 ---
 
 In the previous article, we learned about `volatile` and atomic variables for individual values. But what about **collections**? When multiple threads read and write to a `HashMap` or `ArrayList`, things can break in spectacular ways. Let's explore Java's purpose-built **concurrent collections**.

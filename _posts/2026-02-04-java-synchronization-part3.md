@@ -8,7 +8,6 @@ tags: [java, synchronization, deadlock, reentrantlock, concurrency]
 toc: true
 image:
   path: /assets/photos/synchros.png
-published: false
 ---
 
 In **Part 1**, we covered synchronized methods and blocks. In **Part 2**, we explored inter-thread communication with `wait()` and `notify()`. Now let's tackle **deadlocks** and **modern locking mechanisms**.

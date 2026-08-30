@@ -5,7 +5,6 @@ author: Vaibhav Gagneja
 date: 2025-03-30 15:27:15 +0000
 categories: [Development, Chrome Extensions]
 tags: [chrome-extension, javascript, tutorial, web-development]
-published: false
 ---
 
 ## Introduction

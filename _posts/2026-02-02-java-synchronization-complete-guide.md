@@ -8,7 +8,6 @@ tags: [java, synchronization, multithreading, concurrency, thread-safety]
 toc: true
 image:
   path: /assets/photos/synchros.png
-published: false
 ---
 
 In the previous article, we explored threads, their lifecycle, and various thread methods. Now it's time to tackle one of the most critical aspects of multithreading: **Synchronization**.
