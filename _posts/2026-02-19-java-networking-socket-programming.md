@@ -1,4 +1,4 @@
----
+﻿---
 title: "Java Networking Part 2: Socket Programming — Building Client-Server Applications"
 description: Master Java Socket and ServerSocket classes, build an Echo server, a Knock Knock joke server, and learn multi-client handling with threads
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, networking, sockets, serversocket, tcp, multithreading, client-serv
 toc: true
 image:
   path: https://images.unsplash.com/photo-1558494949-ef010cbdcc31
+published: false
 ---
 
 In [Part 1](/posts/java-networking-urls-basics/) we covered the fundamentals — TCP vs UDP, ports, and Java's URL classes. Now it's time to get our hands dirty with **Socket programming** — the heart of network communication in Java.

@@ -1,4 +1,4 @@
----
+﻿---
 title: "Kubernetes Architecture Explained: Control Plane, Worker Nodes, and How It All Fits Together"
 description: Understand Kubernetes architecture from scratch — why Kubernetes exists, how the Control Plane and Data Plane work, what every component does, and how Pods actually run on worker nodes — all explained in plain English.
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [kubernetes, k8s, docker, containers, devops, architecture, pods, control-
 toc: true
 image:
   path: https://images.unsplash.com/photo-1667372393086-9d4001d51cf1
+published: false
 ---
 
 You know Docker. You can build images, run containers, and maybe even write a `docker-compose.yml`. But the moment someone says **"we use Kubernetes in production"**, the complexity feels like it jumps 10x.

@@ -1,4 +1,4 @@
----
+﻿---
 title: "Java Concurrency: ExecutorService, Callable, Future and CompletableFuture"
 description: Master modern Java concurrency with Thread Pools, ExecutorService, Callable, Future, and CompletableFuture for async programming
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, concurrency, executorservice, completablefuture, async, thread-pool
 toc: true
 image:
   path: /assets/photos/executor.png
+published: false
 ---
 
 In the previous articles, we covered threads, synchronization, and deadlock prevention. Now let's explore **modern Java concurrency** - how to manage threads efficiently and write clean asynchronous code.

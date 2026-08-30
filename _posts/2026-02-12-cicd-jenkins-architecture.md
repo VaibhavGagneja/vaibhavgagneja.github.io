@@ -1,4 +1,4 @@
----
+﻿---
 title: "CI/CD & Jenkins Architecture: A Complete Guide from Zero to Pipeline Mastery"
 description: Understand CI/CD concepts, Jenkins architecture, pipelines, distributed builds, and best practices — all explained in simple, easy-to-understand language
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [cicd, jenkins, devops, automation, pipelines, continuous-integration, con
 toc: true
 image:
   path: https://images.unsplash.com/photo-1667372393086-9d4001d51cf1
+published: false
 ---
 
 If you've ever wondered how companies like Google, Netflix, or Amazon push code changes to production **hundreds of times a day** without breaking things — the answer is **CI/CD**. And one of the most popular tools to make this happen is **Jenkins**.

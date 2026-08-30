@@ -1,4 +1,4 @@
----
+﻿---
 title: "Java Concurrency: Fork/Join Framework, ThreadLocal & Virtual Threads"
 description: Master the Fork/Join framework for parallel divide-and-conquer, ThreadLocal for thread-confined data, and Java 21's revolutionary Virtual Threads
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, concurrency, forkjoin, virtual-threads, threadlocal, project-loom]
 toc: true
 image:
   path: /assets/photos/synchros.png
+published: false
 ---
 
 We've covered thread safety, synchronizers, and concurrent collections. Now let's explore three powerful mechanisms: **Fork/Join** for divide-and-conquer parallelism, **ThreadLocal** for thread-confined data, and the game-changing **Virtual Threads** from Java 21.

@@ -1,4 +1,4 @@
----
+﻿---
 title: "Java Synchronization Part 3: Deadlocks, ReentrantLock and Modern Concurrency"
 description: Master deadlock prevention, ReentrantLock, and java.util.concurrent utilities for robust multithreaded applications
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, synchronization, deadlock, reentrantlock, concurrency]
 toc: true
 image:
   path: /assets/photos/synchros.png
+published: false
 ---
 
 In **Part 1**, we covered synchronized methods and blocks. In **Part 2**, we explored inter-thread communication with `wait()` and `notify()`. Now let's tackle **deadlocks** and **modern locking mechanisms**.

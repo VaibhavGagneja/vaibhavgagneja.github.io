@@ -1,4 +1,4 @@
----
+﻿---
 title: "Java Networking Part 1: Networking Basics, URLs, and URLConnections"
 description: Understand TCP vs UDP, ports, the URL class, reading from URLs, and URLConnections with clear examples and diagrams
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, networking, tcp, udp, url, urlconnection, ports]
 toc: true
 image:
   path: https://images.unsplash.com/photo-1544197150-b99a580bb7a8
+published: false
 ---
 
 Every Java developer uses the network — whether it's loading a web page, calling a REST API, or fetching a file from a server. But how does it all actually work under the hood? In this three-part series, we'll go from the **fundamentals of networking** all the way to building **multi-client servers** and working with **datagrams**.

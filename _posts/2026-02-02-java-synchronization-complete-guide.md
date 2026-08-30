@@ -1,4 +1,4 @@
----
+﻿---
 title: "Java Synchronization Part 1: Thread Safety, Synchronized Methods and Blocks"
 description: Master Java synchronization fundamentals - understand race conditions, synchronized methods, synchronized blocks, and static synchronization with detailed examples
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, synchronization, multithreading, concurrency, thread-safety]
 toc: true
 image:
   path: /assets/photos/synchros.png
+published: false
 ---
 
 In the previous article, we explored threads, their lifecycle, and various thread methods. Now it's time to tackle one of the most critical aspects of multithreading: **Synchronization**.

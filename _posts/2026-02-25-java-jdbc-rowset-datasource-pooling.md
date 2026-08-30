@@ -1,4 +1,4 @@
----
+﻿---
 title: "Java JDBC Part 3: RowSet Objects, DataSource, and Connection Pooling"
 description: Explore connected and disconnected RowSets (JdbcRowSet, CachedRowSet, WebRowSet, JoinRowSet, FilteredRowSet), DataSource objects for production-grade connections, and connection pooling for high-performance applications
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, jdbc, database, rowset, datasource, connection-pooling, cachedrowse
 toc: true
 image:
   path: https://images.unsplash.com/photo-1551288049-bebda4e38f71
+published: false
 ---
 
 In [Part 1](/posts/java-jdbc-fundamentals/) we covered the JDBC fundamentals, and in [Part 2](/posts/java-jdbc-transactions-prepared-statements/) we mastered prepared statements and transactions. Now we tackle the more advanced side of JDBC: **RowSet objects** that bring flexibility and JavaBeans compliance to your data access, **DataSource** for production-grade connection management, and **connection pooling** for performance at scale.

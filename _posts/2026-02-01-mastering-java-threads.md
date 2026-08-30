@@ -1,4 +1,4 @@
----
+﻿---
 title: "Mastering Java Threads: A Complete Guide to Processes, Multithreading, and Lifecycle"
 description: Deep dive into processes, threads, multithreading concepts, and thread lifecycle in Java with practical examples
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, threads, multithreading, concurrency, processes]
 toc: true
 image:
   path: /assets/photos/mastering.png
+published: false
 ---
 
 In the world of software development, understanding how an operating system handles tasks is crucial for writing efficient, high-performance applications. Whether you are building a simple text editor or a complex banking system, the concepts of **Processes** and **Threads** are the building blocks of concurrency.

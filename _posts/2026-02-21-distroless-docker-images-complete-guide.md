@@ -1,4 +1,4 @@
----
+﻿---
 title: "Distroless Docker Images: Why Your Container Doesn't Need a Shell (And How It All Works)"
 description: Understand what Distroless images are, why they exist, how containers run without a shell, multi-stage builds, exec form vs shell form, Chainguard images, and production debugging — explained from first principles.
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [docker, containers, distroless, security, multi-stage-builds, chainguard,
 toc: true
 image:
   path: https://images.unsplash.com/photo-1605745341112-85968b19335b?q=80&w=870&auto=format&fit=crop
+published: false
 ---
 
 If you've ever pulled an `ubuntu` or `alpine` Docker image and wondered — *"Why is my container 100MB when my app is only 5MB?"* — you've stumbled onto one of the most important questions in container security.

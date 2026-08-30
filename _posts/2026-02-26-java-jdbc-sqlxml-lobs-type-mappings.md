@@ -1,4 +1,4 @@
----
+﻿---
 title: "Java JDBC Part 4: SQLXML, Large Objects, and Custom Type Mappings"
 description: Work with XML data via SQLXML objects, read and write BLOBs and CLOBs for binary and text large objects, and map SQL types to custom Java classes with custom type mappings
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, jdbc, database, sql, sqlxml, blob, clob, type-mapping, large-object
 toc: true
 image:
   path: https://images.unsplash.com/photo-1544383835-bda2bc66a55d
+published: false
 ---
 
 In [Part 1](/posts/java-jdbc-fundamentals/) we covered connections and basic operations, [Part 2](/posts/java-jdbc-transactions-prepared-statements/) handled prepared statements and transactions, and [Part 3](/posts/java-jdbc-rowset-datasource-pooling/) explored RowSets and connection pooling. This final part tackles advanced data types — storing XML directly in the database, handling binary and text large objects, and mapping SQL types to your own Java classes.

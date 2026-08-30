@@ -1,4 +1,4 @@
----
+﻿---
 title: "Part 1: How to Get CKAD (Certified Kubernetes Application Developer) Certification in 2 Weeks"
 description: A comprehensive guide to preparing for and passing the CKAD exam with the right resources and study approach.
 author: Vaibhav Gagneja
@@ -7,6 +7,7 @@ categories: [DevOps, Kubernetes]
 tags: [ckad, kubernetes, certification, devops, cloud-native, cncf]
 image:
   path: https://cdn.hashnode.com/res/hashnode/image/upload/v1717329072620/47b54549-9189-42ab-ad54-b33757b8d286.png
+published: false
 ---
 
 ## Overview

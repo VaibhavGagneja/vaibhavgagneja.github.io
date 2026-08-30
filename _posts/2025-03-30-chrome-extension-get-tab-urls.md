@@ -1,10 +1,11 @@
----
+﻿---
 title: "How to Create a Chrome Extension to Retrieve URLs of All Open Tabs"
 description: Build a simple Chrome extension to get and display URLs of all your open browser tabs
 author: Vaibhav Gagneja
 date: 2025-03-30 15:27:15 +0000
 categories: [Development, Chrome Extensions]
 tags: [chrome-extension, javascript, tutorial, web-development]
+published: false
 ---
 
 ## Introduction

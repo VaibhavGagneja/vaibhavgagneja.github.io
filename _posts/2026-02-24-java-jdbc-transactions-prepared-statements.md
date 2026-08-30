@@ -1,4 +1,4 @@
----
+﻿---
 title: "Java JDBC Part 2: Prepared Statements, Callable Statements, Transactions, and Batch Updates"
 description: Master parameterized queries with PreparedStatement, call stored procedures with CallableStatement, control transactions with commit and rollback, use savepoints, understand isolation levels, and perform efficient batch updates
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, jdbc, database, sql, prepared-statements, callable-statements, stor
 toc: true
 image:
   path: https://images.unsplash.com/photo-1558494949-ef010cbdcc31
+published: false
 ---
 
 In [Part 1](/posts/java-jdbc-fundamentals/), we covered the JDBC fundamentals — establishing connections, executing simple statements, reading results, and handling exceptions. But production database code demands more.

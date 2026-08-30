@@ -1,4 +1,4 @@
----
+﻿---
 title: "Stop Manually Clicking! How Terraform Made My AWS & Jenkins Learning Journey Effortless"
 description: Set up AWS EC2 with Jenkins using Terraform
 author: Vaibhav Gagneja
@@ -7,6 +7,7 @@ categories: [DevOps, Terraform]
 tags: [terraform, aws, jenkins, infrastructure-as-code, automation]
 image:
   path: https://cdn.hashnode.com/res/hashnode/image/upload/v1770399094548/fecac1bb-e823-4177-8419-b165cf28d812.jpeg
+published: false
 ---
 
 I recently resumed my journey learning AWS, and I hit a realization that changed everything.

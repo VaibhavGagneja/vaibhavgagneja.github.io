@@ -1,4 +1,4 @@
----
+﻿---
 title: "Java JDBC Part 1: Connections, Statements, and ResultSets"
 description: Learn the fundamentals of Java Database Connectivity — how to connect to a database, execute SQL, process results, handle exceptions, and understand the Coffee Break sample database
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, jdbc, database, sql, mysql, derby, resultset, connections]
 toc: true
 image:
   path: https://images.unsplash.com/photo-1544383835-bda2bc66a55d
+published: false
 ---
 
 Most Java applications need to talk to a database at some point — whether it's storing user profiles, reading product catalogs, or running analytics queries. Java's **JDBC (Java Database Connectivity)** API is the standard way to make that happen.

@@ -1,4 +1,4 @@
----
+﻿---
 title: "Java I/O Streams: A Complete Guide from Byte Streams to Object Serialization"
 description: Master Java I/O with byte streams, character streams, buffered I/O, Scanner, formatting, data streams, and object serialization with practical examples
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, io, streams, serialization, file-handling, scanner]
 toc: true
 image:
   path: https://images.unsplash.com/photo-1637335088701-d204113650f3
+published: false
 ---
 
 Every Java program needs to read input or write output at some point — whether it's reading a file, accepting user input from the keyboard, or saving objects to disk. Java's **I/O (Input/Output) Streams** framework is how you do all of this.

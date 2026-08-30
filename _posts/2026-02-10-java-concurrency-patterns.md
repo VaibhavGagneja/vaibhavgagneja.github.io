@@ -1,4 +1,4 @@
----
+﻿---
 title: "Java Concurrency: Common Patterns, Interview Problems & Best Practices"
 description: Thread-safe Singleton, Immutability, classic interview problems (Odd-Even, Producer-Consumer, Dining Philosophers) and a complete best practices cheat sheet
 author: Vaibhav Gagneja
@@ -8,6 +8,7 @@ tags: [java, concurrency, design-patterns, interview, best-practices]
 toc: true
 image:
   path: /assets/photos/synchros.png
+published: false
 ---
 
 Welcome to the final installment of our Java Concurrency series! We'll bring everything together by exploring **common concurrency patterns**, solving **classic interview problems**, and compiling a **complete best practices** cheat sheet.
